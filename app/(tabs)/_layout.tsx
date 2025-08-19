@@ -1,43 +1,52 @@
 import { Ionicons } from "@expo/vector-icons";
 import React, { useState } from "react";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { Pressable, SafeAreaView, ScrollView, Text, TouchableOpacity, useColorScheme, View } from "react-native";
+import TabCamera from "./camera";
+import TabInspectionMods from "./inspection_mods";
+import TabUsersManuals from "./users_manuals";
 
-const tabScreens = ["Camera", "How-to", "Downloads", "Docs", "Curriculum", "Settings"];
+// Import your tab components
+
+
+const tabScreens = [
+  { name: "CAMERA", component: <TabCamera /> },
+  { name: "HOW-TO", component: <TabUsersManuals /> },
+  { name: "DOWNLOADS", component: <TabInspectionMods /> },
+];
 
 export default function Layout() {
-  const [activeTab, setActiveTab] = useState("Camera");
+  const [activeTab, setActiveTab] = useState("CAMERA");
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === "dark";
+
+  // Find the component of the active tab
+  const activeComponent = tabScreens.find((tab) => tab.name === activeTab)?.component;
 
   return (
-    <View style={{ flex: 1, backgroundColor: "black" }}>
+    <View className={`flex-1 ${isDark ? "bg-black" : "bg-white"}`}>
       {/* Screen Content */}
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <Text className="text-blue-500 font-mono">{activeTab} Screen</Text>
-      </View>
+      <View className="flex-1">{activeComponent}</View>
 
       {/* Scrollable Tabs (like Camera Roll) */}
-      <View style={{ height: 60, justifyContent: "center" }}>
+      <View className="h-14 justify-center">
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
-          contentContainerStyle={{
-            paddingHorizontal: 20,
-            alignItems: "center",
-          }}
+          contentContainerStyle={{ paddingHorizontal: 4, alignItems: "center" }}
         >
           {tabScreens.map((tab) => (
             <TouchableOpacity
-              key={tab}
-              onPress={() => setActiveTab(tab)}
-              style={{ marginHorizontal: 12 }}
+              key={tab.name}
+              onPress={() => setActiveTab(tab.name)}
+              className="mx-3 px-3 py-1 rounded-full"
+              style={{
+                backgroundColor: activeTab === tab.name ? "#4f46e5" : isDark ? "#374151" : "#e5e7eb",
+              }}
             >
               <Text
-                style={{
-                  fontSize: 16,
-                  fontWeight: activeTab === tab ? "700" : "400",
-                  color: activeTab === tab ? "white" : "gray",
-                }}
+                className={`text-lg ${activeTab === tab.name ? "text-white font-bold" : isDark ? "text-gray-300" : "text-gray-700"}`}
               >
-                {tab}
+                {tab.name}
               </Text>
             </TouchableOpacity>
           ))}
@@ -45,28 +54,28 @@ export default function Layout() {
       </View>
 
       {/* Bottom Action Bar */}
-      <View
-      className="bg-slate-600"
-        style={{
-          flexDirection: "row",
-          justifyContent: "space-around",
-          alignItems: "center",
-          paddingVertical: 12,
-          borderTopWidth: 0.5,
-          borderTopColor: "gray",
-          backgroundColor: "#111",
-        }}
-      >
-        <TouchableOpacity>
-          <Ionicons name="search" size={28} color="white" />
-        </TouchableOpacity>
-        <TouchableOpacity>
-          <Ionicons name="camera" size={32} color="white" />
-        </TouchableOpacity>
-        <TouchableOpacity>
-          <Ionicons name="mic" size={28} color="white" />
-        </TouchableOpacity>
-      </View>
+      <SafeAreaView className="flex-row justify-around items-center py-3">
+        <Pressable
+          className="px-5 py-2 rounded-full bg-slate-400"
+          onPress={() => console.log("Search pressed")}
+        >
+          <Ionicons name="search" size={20} color="white" />
+        </Pressable>
+
+        <Pressable
+          className="px-5 py-2 rounded-full bg-slate-400"
+          onPress={() => console.log("Camera pressed")}
+        >
+          <Ionicons name="camera" size={20} color="white" />
+        </Pressable>
+
+        <Pressable
+          className="px-5 py-2 rounded-full bg-slate-400"
+          onPress={() => console.log("Mic pressed")}
+        >
+          <Ionicons name="mic" size={20} color="white" />
+        </Pressable>
+      </SafeAreaView>
     </View>
   );
 }
