@@ -1,45 +1,72 @@
-import { Tabs } from 'expo-router';
-import React from 'react';
-import { Platform } from 'react-native';
+import { Ionicons } from "@expo/vector-icons";
+import React, { useState } from "react";
+import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 
-import { HapticTab } from '@/components/HapticTab';
-import { IconSymbol } from '@/components/ui/IconSymbol';
-import TabBarBackground from '@/components/ui/TabBarBackground';
-import { Colors } from '@/constants/Colors';
-import { useColorScheme } from '@/hooks/useColorScheme';
+const tabScreens = ["Camera", "How-to", "Downloads", "Docs", "Curriculum", "Settings"];
 
-export default function TabLayout() {
-  const colorScheme = useColorScheme();
+export default function Layout() {
+  const [activeTab, setActiveTab] = useState("Camera");
 
   return (
-    <Tabs
-      screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        headerShown: false,
-        tabBarButton: HapticTab,
-        tabBarBackground: TabBarBackground,
-        tabBarStyle: Platform.select({
-          ios: {
-            // Use a transparent background on iOS to show the blur effect
-            position: 'absolute',
-          },
-          default: {},
-        }),
-      }}>
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: 'Home',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
+    <View style={{ flex: 1, backgroundColor: "black" }}>
+      {/* Screen Content */}
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <Text className="text-blue-500 font-mono">{activeTab} Screen</Text>
+      </View>
+
+      {/* Scrollable Tabs (like Camera Roll) */}
+      <View style={{ height: 60, justifyContent: "center" }}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{
+            paddingHorizontal: 20,
+            alignItems: "center",
+          }}
+        >
+          {tabScreens.map((tab) => (
+            <TouchableOpacity
+              key={tab}
+              onPress={() => setActiveTab(tab)}
+              style={{ marginHorizontal: 12 }}
+            >
+              <Text
+                style={{
+                  fontSize: 16,
+                  fontWeight: activeTab === tab ? "700" : "400",
+                  color: activeTab === tab ? "white" : "gray",
+                }}
+              >
+                {tab}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      </View>
+
+      {/* Bottom Action Bar */}
+      <View
+      className="bg-slate-600"
+        style={{
+          flexDirection: "row",
+          justifyContent: "space-around",
+          alignItems: "center",
+          paddingVertical: 12,
+          borderTopWidth: 0.5,
+          borderTopColor: "gray",
+          backgroundColor: "#111",
         }}
-      />
-      <Tabs.Screen
-        name="explore"
-        options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
-        }}
-      />
-    </Tabs>
+      >
+        <TouchableOpacity>
+          <Ionicons name="search" size={28} color="white" />
+        </TouchableOpacity>
+        <TouchableOpacity>
+          <Ionicons name="camera" size={32} color="white" />
+        </TouchableOpacity>
+        <TouchableOpacity>
+          <Ionicons name="mic" size={28} color="white" />
+        </TouchableOpacity>
+      </View>
+    </View>
   );
 }
