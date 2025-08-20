@@ -1,44 +1,64 @@
 import { Ionicons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
+import { Link } from "expo-router";
 import React from "react";
 import { Pressable, ScrollView, Text, TouchableOpacity, useColorScheme, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-
-import { Link } from "expo-router";
 import TabCamera from "./camera";
 
-const tabScreens = ["CAMERA", "HOW-TO", "DOWNLOADS", "DOCS", "CURRICULUM", "SETTINGS"];
+const tabScreens = [
+  "CAMERA",
+  "HOW-TO",
+  "DOWNLOADS",
+  "PLACEHOLDER1",
+  "PLACEHOLDER2",
+  "PLACEHOLDER3",
+];
 
 export default function Layout() {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
 
   return (
-    <View className="flex-1 relative">
-      {/* Camera tab */}
-      <SafeAreaView className="flex-1 bg-slate-400">
-        <TabCamera />
-      </SafeAreaView>
+    <>
+      <BlurView className="absolute top-0 w-full z-10 px-4" intensity={100} tint={isDark ? "dark" : "light"}>
+        <SafeAreaView className="mt-5">
+          <Link className="" href="/login">
+            <Text className="text-white text-lg font-bold ml-2">Login</Text>
+          </Link>
+        </SafeAreaView>
+      </BlurView>
+      <View className="flex-1 relative">
+        {/* Camera tab */}
+        <SafeAreaView className="flex-1 bg-slate-400">
+          <TabCamera />
+        </SafeAreaView>
 
+
+      </View>
       {/* Bottom tab bar */}
       <BlurView
         className="absolute bottom-0 w-full"
-        intensity={80}
+        intensity={100}
         tint={isDark ? "dark" : "light"}
       >
         <SafeAreaView className="-mt-6">
           {/* Scrollable Tabs */}
-          <View className="mb-10 h-12 justify-center">
+          <View className="mb-10 h-12 justify-center mx-3">
             <ScrollView
               horizontal
               showsHorizontalScrollIndicator={false}
-              contentContainerStyle={{ paddingHorizontal: 8, alignItems: "center" }}
+              contentContainerStyle={{ alignItems: "center" }}
             >
               {tabScreens.map((tab) => {
                 if (tab === "HOW-TO") {
                   return (
-                    <Link key={tab} href="/users_manuals" style={{ marginHorizontal: 12 }}>
-                      <Text style={{ color: isDark ? "white" : "gray", fontSize: 16 }}>
+                    <Link
+                      key={tab}
+                      href="/users_manuals"
+                      className="mx-3"
+                    >
+                      <Text className={`text-lg ${isDark ? "text-white" : "text-white"}`}>
                         {tab}
                       </Text>
                     </Link>
@@ -46,22 +66,27 @@ export default function Layout() {
                 }
                 if (tab === "DOWNLOADS") {
                   return (
-                    <Link key={tab} href="/inspection_mods" style={{ marginHorizontal: 12 }}>
-                      <Text style={{ color: isDark ? "white" : "gray", fontSize: 16 }}>
+                    <Link
+                      key={tab}
+                      href="/inspection_mods"
+                      className="mx-3"
+                    >
+                      <Text className={`text-lg ${isDark ? "text-white" : "text-white"}`}>
                         {tab}
                       </Text>
                     </Link>
                   );
                 }
-                // CAMERA or future tabs
+                // CAMERA or other placeholders
                 return (
-                  <TouchableOpacity key={tab} style={{ marginHorizontal: 12 }}>
+                  <TouchableOpacity key={tab} className="mx-3">
                     <Text
-                      style={{
-                        color: tab === "CAMERA" ? "white" : isDark ? "white" : "gray",
-                        fontSize: 16,
-                        fontWeight: tab === "CAMERA" ? "bold" : "normal",
-                      }}
+                      className={`text-lg ${tab === "CAMERA"
+                          ? "text-white font-bold"
+                          : isDark
+                            ? "text-white"
+                            : "text-white"
+                        }`}
                     >
                       {tab}
                     </Text>
@@ -87,6 +112,7 @@ export default function Layout() {
           </View>
         </SafeAreaView>
       </BlurView>
-    </View>
+    </>
+
   );
 }

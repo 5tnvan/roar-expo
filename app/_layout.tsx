@@ -30,6 +30,13 @@ export default function RootLayout() {
               title: "How-to",               // title in the header
               headerBackTitle: "Back"      // text on back button
             }} />
+            <Stack.Screen name="login"
+            options={{
+              presentation: 'modal',
+              headerShown: true,           // show header
+              title: "Login",               // title in the header
+              headerBackTitle: "Back"      // text on back button
+            }} />
           <Stack.Screen name="+not-found" />
         </Stack>
         <StatusBar style="auto" />
