@@ -1,9 +1,9 @@
 import { ThemedText } from '@/components/ThemedText';
 import { SafeAreaView, StyleSheet } from 'react-native';
 
-export default function TabInspectionMods() {
+export default function ModalInspectionMods() {
   return (
-    <SafeAreaView><ThemedText type="title">Welcome 2!</ThemedText></SafeAreaView>
+    <SafeAreaView><ThemedText type="title">Inspections</ThemedText></SafeAreaView>
   );
 }
 

@@ -1,23 +1,31 @@
-import { ThemedText } from '@/components/ThemedText';
-import { SafeAreaView, StyleSheet, useColorScheme } from 'react-native';
+import * as Device from "expo-device";
+import { Platform, StyleSheet, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Camera, useCameraDevice, useCameraPermission } from "react-native-vision-camera";
 
 export default function TabCamera() {
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === "dark";
-  return (
-    <SafeAreaView><ThemedText type="title">Welcome 2!</ThemedText></SafeAreaView>
-  );
-}
+  const device = useCameraDevice("back");
+  const { hasPermission, requestPermission } = useCameraPermission();
 
-const styles = StyleSheet.create({
-  headerImage: {
-    color: '#808080',
-    bottom: -90,
-    left: -35,
-    position: 'absolute',
-  },
-  titleContainer: {
-    flexDirection: 'row',
-    gap: 8,
-  },
-});
+  // Disable camera on simulators
+  const isSimulator = Platform.OS === "ios" && !Device.isDevice;
+
+  if (isSimulator) {
+    return (
+      <View style={[StyleSheet.absoluteFill, { justifyContent: "center", alignItems: "center" }]}>
+        <Text>Camera disabled on simulator</Text>
+      </View>
+    );
+  }
+
+  if (!hasPermission) {
+    requestPermission();
+    return <SafeAreaView><Text className="">Requesting camera permission...</Text></SafeAreaView>;
+  }
+
+  if (!device) {
+    return <Text>No camera device found</Text>;
+  }
+
+  return <Camera style={StyleSheet.absoluteFill} device={device} isActive />;
+}

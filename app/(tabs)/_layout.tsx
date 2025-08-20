@@ -1,34 +1,52 @@
 import { Ionicons } from "@expo/vector-icons";
+import { BlurView } from "expo-blur";
+import { Link } from "expo-router";
 import React, { useState } from "react";
-import { Pressable, SafeAreaView, ScrollView, Text, TouchableOpacity, useColorScheme, View } from "react-native";
+import { Pressable, ScrollView, Text, TouchableOpacity, useColorScheme, View } from "react-native";
+import ModalInspectionMods from "../inspection_mods";
+import ModalUsersManuals from "../users_manuals";
 import TabCamera from "./camera";
-import TabInspectionMods from "./inspection_mods";
-import TabUsersManuals from "./users_manuals";
 
-// Import your tab components
-
-
-const tabScreens = [
-  { name: "CAMERA", component: <TabCamera /> },
-  { name: "HOW-TO", component: <TabUsersManuals /> },
-  { name: "DOWNLOADS", component: <TabInspectionMods /> },
-];
+const tabScreens = ["CAMERA", "HOW-TO", "DOWNLOADS", "DOCS", "CURRICULUM", "SETTINGS"];
 
 export default function Layout() {
+  
   const [activeTab, setActiveTab] = useState("CAMERA");
   const colorScheme = useColorScheme();
-  const isDark = colorScheme === "dark";
+  const isDark = colorScheme === 'dark';
 
-  // Find the component of the active tab
-  const activeComponent = tabScreens.find((tab) => tab.name === activeTab)?.component;
+  const renderTabContent = () => {
+    switch (activeTab) {
+      case "CAMERA":
+        return <TabCamera />;
+      case "HOW-TO":
+        return <ModalUsersManuals />;
+      case "DOWNLOADS":
+        return <ModalInspectionMods />;
+      default:
+        return (
+          <View className="flex-1 justify-center items-center">
+            <Text className={`${isDark ? "text-white" : "text-black"} text-xl`}>{activeTab} Screen</Text>
+          </View>
+        );
+    }
+  };
 
   return (
-    <View className={`flex-1 ${isDark ? "bg-black" : "bg-white"}`}>
+    <View className={`flex-1 relative ${isDark ? "" : ""}`}>
       {/* Screen Content */}
-      <View className="flex-1">{activeComponent}</View>
-
-      {/* Scrollable Tabs (like Camera Roll) */}
-      <View className="h-14 justify-center">
+      <View className="flex-1 bg-slate-400 p-30">{renderTabContent()}</View>
+      {/* <Tabs>
+      <Tabs.Screen name="index" />
+      <Tabs.Screen name="camera" />
+    </Tabs> */}
+<View className="absolute bottom-0">
+  <BlurView className="bg-gray-500/80 ">
+      <Link href="/users_manuals">
+        Open modal
+      </Link>
+        {/* Scrollable Tabs (above bottom action bar) */}
+      <View className="mb-8 mt-4 h-14 justify-center ">
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
@@ -36,17 +54,14 @@ export default function Layout() {
         >
           {tabScreens.map((tab) => (
             <TouchableOpacity
-              key={tab.name}
-              onPress={() => setActiveTab(tab.name)}
-              className="mx-3 px-3 py-1 rounded-full"
-              style={{
-                backgroundColor: activeTab === tab.name ? "#4f46e5" : isDark ? "#374151" : "#e5e7eb",
-              }}
+              key={tab}
+              onPress={() => setActiveTab(tab)}
+              className="mx-5"
             >
               <Text
-                className={`text-lg ${activeTab === tab.name ? "text-white font-bold" : isDark ? "text-gray-300" : "text-gray-700"}`}
+                className={`text-lg ${isDark ? "text-white" : "text-black"} ${activeTab === tab ? "text-white font-bold" : "text-gray-400 font-normal"}`}
               >
-                {tab.name}
+                {tab}
               </Text>
             </TouchableOpacity>
           ))}
@@ -54,28 +69,33 @@ export default function Layout() {
       </View>
 
       {/* Bottom Action Bar */}
-      <SafeAreaView className="flex-row justify-around items-center py-3">
+      <View className="flex-row justify-around items-center">
         <Pressable
-          className="px-5 py-2 rounded-full bg-slate-400"
+          className="px-7 py-3 rounded-full bg-gray-600"
           onPress={() => console.log("Search pressed")}
         >
           <Ionicons name="search" size={20} color="white" />
         </Pressable>
 
         <Pressable
-          className="px-5 py-2 rounded-full bg-slate-400"
+          className="px-6 py-4 rounded-full bg-gray-600"
           onPress={() => console.log("Camera pressed")}
         >
-          <Ionicons name="camera" size={20} color="white" />
+          <Ionicons name="camera" size={24} color="white" />
         </Pressable>
 
         <Pressable
-          className="px-5 py-2 rounded-full bg-slate-400"
+          className="px-7 py-3 rounded-full bg-gray-600"
           onPress={() => console.log("Mic pressed")}
         >
           <Ionicons name="mic" size={20} color="white" />
         </Pressable>
-      </SafeAreaView>
+      </View>
+      </BlurView>
+</View>
+      
+
+      
     </View>
   );
 }

@@ -1,9 +1,9 @@
 import { ThemedText } from '@/components/ThemedText';
 import { SafeAreaView, StyleSheet } from 'react-native';
 
-export default function TabUsersManuals() {
+export default function ModalUsersManuals() {
   return (
-    <SafeAreaView><ThemedText type="title">Welcome 2!</ThemedText></SafeAreaView>
+    <SafeAreaView><ThemedText type="title">Users manual</ThemedText></SafeAreaView>
   );
 }
 
