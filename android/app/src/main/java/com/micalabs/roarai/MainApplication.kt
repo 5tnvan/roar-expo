@@ -1,4 +1,4 @@
-package com.yourname.myapp
+package com.micalabs.roarai
 
 import android.app.Application
 import android.content.res.Configuration

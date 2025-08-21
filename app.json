@@ -10,7 +10,7 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.yourname.myapp"
+      "bundleIdentifier": "com.micalabs.roarai"
     },
     "android": {
       "adaptiveIcon": {
@@ -18,7 +18,7 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.yourname.myapp"
+      "package": "com.micalabs.roarai"
     },
     "web": {
       "bundler": "metro",
@@ -34,6 +34,12 @@
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
+        }
+      ],
+      [
+        "@react-native-google-signin/google-signin",
+        {
+          "iosUrlScheme": "com.googleusercontent.apps.729757470966-rk0opa2oc7aijps95nmfvrl1lbnb6be7"
         }
       ]
     ],

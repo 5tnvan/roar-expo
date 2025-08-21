@@ -87,9 +87,9 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace 'com.yourname.myapp'
+    namespace 'com.micalabs.roarai'
     defaultConfig {
-        applicationId 'com.yourname.myapp'
+        applicationId 'com.micalabs.roarai'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
@@ -151,6 +151,9 @@ android {
 }
 
 dependencies {
+
+    // google auth
+    implementation 'com.google.android.gms:play-services-auth:21.0.0'
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")
 
