@@ -63,87 +63,87 @@ export default function Layout() {
 
 
   const handleDetectTextPrompt = async (items?: string) => {
-  try {
-    console.log("handleDetectTextPrompt fired", textPromptInput);
+    try {
+      console.log("handleDetectTextPrompt fired", textPromptInput);
 
-    // Reset state
-    setDetectedPhoto(null);
-    setDetectedClasses([]);
-    setLoading1(true);
-    setIsDetecting(true);
+      // Reset state
+      setDetectedPhoto(null);
+      setDetectedClasses([]);
+      setLoading1(true);
+      setIsDetecting(true);
 
-    if (!cameraRef.current) {
-      console.warn("Camera not ready");
+      if (!cameraRef.current) {
+        console.warn("Camera not ready");
+        setLoading1(false);
+        setIsDetecting(false);
+        return;
+      }
+
+      // Take photo with VisionCamera
+      const photo = await cameraRef.current.takePhoto();
+      console.log("Captured photo:", photo.path);
+
+      let uri = photo.path; // e.g., "/data/user/0/com.micalabs.roarai/cache/..."
+      if (Platform.OS === "android" && !uri.startsWith("file://")) {
+        uri = "file://" + uri;
+      }
+
+      // Show immediate preview
+      setDetectedPhoto(uri);
+
+      // Create FormData
+      const formData = new FormData();
+
+      // ✅ React Native expects { uri, name, type } for file
+      formData.append("file", {
+        uri: uri,
+        name: "capture.jpg",
+        type: "image/jpeg",
+      } as any); // cast to any
+
+      // Append prompt text if exists
+      const promptText = items || textPromptInput;
+      if (promptText) {
+        formData.append("prompts", promptText);
+      }
+
+      // Platform-specific API base
+      const API_BASE = "http://192.168.0.184:8000";
+
+      console.log("API_BASE", API_BASE);
+
+      const response = await fetch(`${API_BASE}/detect-with-prompts`, {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
+      const data = await response.json();
+
+      // Ensure classes array exists
+      const detectedClasses = data.classes ?? [];
+      const imageUrl = `data:image/jpeg;base64,${data.image_base64}`;
+
+      setDetectedPhoto(imageUrl);
+      setDetectedClasses(detectedClasses);
+      console.log("Detected classes:", detectedClasses);
+
+      // Optional: send to voice device
+      // if (pipecatRef.current?.isConnected) {
+      //   handleSendClassesToVoice(detectedClasses, {});
+      // }
+
+      // Cleanup
+      setShowPromptInput(false);
+      setTextPromptInput("");
+    } catch (error) {
+      console.error("Error calling detect API:", error);
+    } finally {
       setLoading1(false);
       setIsDetecting(false);
-      return;
     }
-
-    // Take photo with VisionCamera
-    const photo = await cameraRef.current.takePhoto();
-    console.log("Captured photo:", photo.path);
-
-    // Show immediate preview
-    setDetectedPhoto(photo.path);
-
-    // Create FormData
-    const formData = new FormData();
-
-    // ✅ React Native expects { uri, name, type } for file
-    formData.append("file", {
-      uri: photo.path,
-      name: "capture.jpg",
-      type: "image/jpeg",
-    } as any); // cast to any
-
-    // Append prompt text if exists
-    const promptText = items || textPromptInput;
-    if (promptText) {
-      formData.append("prompts", promptText);
-    }
-
-    // Platform-specific API base
-    const API_BASE =
-      Platform.OS === "ios"
-        ? "http://192.168.0.184:8000"
-        : Platform.OS === "android"
-        ? "http://10.0.2.2:8000"
-        : "http://192.168.0.184:8000";
-
-    console.log("API_BASE", API_BASE);
-
-    const response = await fetch(`${API_BASE}/detect-with-prompts`, {
-      method: "POST",
-      body: formData,
-    });
-
-    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-
-    const data = await response.json();
-
-    // Ensure classes array exists
-    const detectedClasses = data.classes ?? [];
-    const imageUrl = `data:image/jpeg;base64,${data.image_base64}`;
-
-    setDetectedPhoto(imageUrl);
-    setDetectedClasses(detectedClasses);
-    console.log("Detected classes:", detectedClasses);
-
-    // Optional: send to voice device
-    // if (pipecatRef.current?.isConnected) {
-    //   handleSendClassesToVoice(detectedClasses, {});
-    // }
-
-    // Cleanup
-    setShowPromptInput(false);
-    setTextPromptInput("");
-  } catch (error) {
-    console.error("Error calling detect API:", error);
-  } finally {
-    setLoading1(false);
-    setIsDetecting(false);
-  }
-};
+  };
 
 
   const handleDetectPromptFree = async () => {
@@ -161,27 +161,27 @@ export default function Layout() {
       // Take a photo with VisionCamera
       const photo = await cameraRef.current.takePhoto();
 
+      let uri = photo.path; // e.g., "/data/user/0/com.micalabs.roarai/cache/..."
+      if (Platform.OS === "android" && !uri.startsWith("file://")) {
+        uri = "file://" + uri;
+      }
+
       // Photo path (local file URI)
-      console.log("Captured photo:", photo.path);
+      console.log("Captured photo:", uri);
 
       // Show immediate preview
-      setDetectedPhoto(photo.path);
+      setDetectedPhoto(uri);
       setIsDetecting(true);
 
       const formData = new FormData();
       formData.append("file", {
-        uri: photo.path,
+        uri: uri,
         name: "capture.jpg",
         type: "image/jpeg",
       } as any);
 
 
-      const API_BASE =
-        Platform.OS === "ios"
-          ? "http://192.168.0.184:8001"
-          : Platform.OS === "android"
-            ? "http://10.0.2.2:8001"
-            : "http://192.168.0.184:8001"; // fallback for real devices
+      const API_BASE = "http://192.168.0.184:8001";
 
       console.log("API_BASE", API_BASE);
 
