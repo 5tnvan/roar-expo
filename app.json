@@ -10,7 +10,10 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.micalabs.roarai"
+      "bundleIdentifier": "com.micalabs.roarai",
+      "infoPlist": {
+    "UIBackgroundModes": ["audio"]
+  }
     },
     "android": {
       "adaptiveIcon": {
@@ -41,7 +44,14 @@
         {
           "iosUrlScheme": "com.googleusercontent.apps.729757470966-rk0opa2oc7aijps95nmfvrl1lbnb6be7"
         }
-      ]
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "The app accesses your photos to let you share them with your friends."
+        }
+      ],
+       "expo-notifications"
     ],
     "experiments": {
       "typedRoutes": true
