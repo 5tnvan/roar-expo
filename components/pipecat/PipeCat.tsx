@@ -1,16 +1,10 @@
 // PipecatContext.tsx
 import { useAuth } from "@/services/providers/AuthProvider";
-import { Capsule } from "@/types/types";
+import { Capsule, TranscriptionEntry } from "@/types/types";
 import { PipecatClient, Transport, TransportState } from "@pipecat-ai/client-js";
 import { RNDailyTransport } from "@pipecat-ai/react-native-daily-transport";
 import { Audio } from "expo-av";
 import React, { createContext, ReactNode, useCallback, useContext, useEffect, useRef, useState } from "react";
-
-interface TranscriptionEntry {
-    type: "user" | "bot";
-    text: string;
-    timestamp: string;
-}
 
 interface PipecatContextProps {
     inCall: boolean;

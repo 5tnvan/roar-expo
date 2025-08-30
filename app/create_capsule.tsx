@@ -1,4 +1,4 @@
-import { ThemedView } from "@/app-example/components/ThemedView";
+import { ThemedView } from "@/components/ThemedView";
 import AppButton from "@/components/ui/Button";
 import { dancingPills } from "@/constants/DancingPills";
 import { inspirations } from "@/constants/Inspo";

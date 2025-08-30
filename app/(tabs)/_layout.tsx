@@ -12,6 +12,7 @@ import PillButton from "@/components/ui/PillButton";
 import SnapButton from "@/components/ui/SnapButton";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/services/providers/AuthProvider";
+import { TranscriptionEntry } from "@/types/types";
 import { BlurView } from "expo-blur";
 import { Link } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
@@ -69,14 +70,14 @@ export default function Layout() {
 
   // call analytics
   const callStartRef = useRef<number | null>(null);
-  const [transLog, setTransLog] = useState<string[]>([]);
+  const [transLog, setTransLog] = useState<TranscriptionEntry[]>([]);
   const [timerUI, setTimerUI] = useState(0);
   const [callDuration, setCallDuration] = useState(0);
 
   //TRACK TRANSCRIPTION DURING CALL
   useEffect(() => {
     if (inCall && openCapsule) {
-      setTransLog(transcriptionLog.map(entry => entry.text));
+      setTransLog(transcriptionLog);
     }
   }, [inCall, openCapsule, transcriptionLog]);
 
@@ -95,7 +96,7 @@ export default function Layout() {
           capsule_id: openCapsule.capsule.id,
           caller_id: user?.id,
           duration: durationSeconds,
-          transcript: transLog.join("\n"),
+          transcript: transLog,
         });
         //2. capsule_stats updates via rpc
         if (error) console.error("Error inserting capsule_call:", error);

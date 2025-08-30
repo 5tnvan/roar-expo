@@ -56,3 +56,9 @@ export type Capsule = {
   like_stats?: CapsuleLike[];
   isLiked: boolean;
 };
+
+export type TranscriptionEntry = {
+    type: "user" | "bot";
+    text: string;
+    timestamp: string;
+}

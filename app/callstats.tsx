@@ -1,11 +1,13 @@
+import { MinFormatter } from "@/components/MinFormatter";
+import TranscriptionLog3 from "@/components/pipecat/TranscriptionLog3";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { useAuth } from "@/services/providers/AuthProvider";
-import type { Capsule, CapsuleCall } from "@/types/types";
-import { fetchCapsuleWithCallAnalytics } from "@/utils/supabase/fetchCapsule"; // adjust path
+import type { Capsule, CapsuleCall, TranscriptionEntry } from "@/types/types";
+import { fetchCapsuleWithCallAnalytics } from "@/utils/supabase/fetchCapsule";
+import { timeAgo } from "@/utils/timeAgo";
 import React, { useEffect, useState } from "react";
 import { Modal, ScrollView, TouchableOpacity, useColorScheme, View } from "react-native";
-import Markdown from "react-native-markdown-display";
 
 interface CallStatsProps {
   visible: boolean;
@@ -25,29 +27,10 @@ export default function CallStats({ visible, capsule_id, onClose }: CallStatsPro
     if (!visible) return;
 
     setLoading(true);
-    fetchCapsuleWithCallAnalytics(capsule_id, user?.id || '')
-      .then(data => setCapsule(data))
+    fetchCapsuleWithCallAnalytics(capsule_id, user?.id || "")
+      .then((data) => setCapsule(data))
       .finally(() => setLoading(false));
   }, [visible, capsule_id, user?.id]);
-
-
-  const renderCallStats = () => {
-    if (!capsule?.call_stats || capsule.call_stats.length === 0) {
-      return "No calls yet.";
-    }
-
-    return capsule.call_stats
-      .map((call: CapsuleCall, index: number) => {
-        const durationMin = Math.floor(call.duration / 60);
-        const durationSec = call.duration % 60;
-        return `**Call #${index + 1}**  
-Caller: @${call.caller.handle}  
-Duration: ${durationMin}m ${durationSec}s  
-Transcript:  
-${call.transcript || "_No transcript_"}\n`;
-      })
-      .join("\n---\n");
-  };
 
   return (
     <Modal
@@ -56,7 +39,7 @@ ${call.transcript || "_No transcript_"}\n`;
       presentationStyle="pageSheet"
       onRequestClose={onClose}
     >
-      <View className={`flex-1 ${isDark ? "bg-zinc-800" : "bg-zinc-200"}`}>
+      <View className={`flex-1 ${isDark ? "bg-gray-900" : "bg-gray-100"}`}>
         {/* Header */}
         <ThemedView className="flex-row justify-between items-center p-4 border-b border-gray-500/20">
           <ThemedText className="text-white text-lg font-bold">Call Stats</ThemedText>
@@ -65,22 +48,39 @@ ${call.transcript || "_No transcript_"}\n`;
           </TouchableOpacity>
         </ThemedView>
 
-        {/* Markdown content */}
-        <ScrollView className="p-4">
-          <Markdown
-            style={{
-              body: {
-                color: isDark ? "#fff" : "#000",
-                fontSize: 16,
-                lineHeight: 24,
-              },
-              heading1: { fontSize: 24, fontWeight: "bold", marginBottom: 8, color: isDark ? "#fff" : "#000" },
-              heading2: { fontSize: 20, fontWeight: "bold", marginBottom: 6, color: isDark ? "#fff" : "#000" },
-            }}
-          >
-            {loading ? "_Loading..._" : renderCallStats()}
-          </Markdown>
-        </ScrollView>
+        {/* Calls */}
+        {loading ? (
+          <View className="flex-1 items-center justify-center">
+            <ThemedText className="text-gray-400">Loading...</ThemedText>
+          </View>
+        ) : (
+          <ScrollView contentContainerClassName="p-3">
+            {capsule?.call_stats?.map((call: CapsuleCall) => (
+              <View
+                key={call.id}
+                className={`mb-4 p-4 rounded-2xl shadow ${isDark ? "bg-gray-800" : "bg-white"}`}
+              >
+                {/* Call header */}
+                <ThemedText className="text-sm font-semibold text-gray-600 dark:text-gray-400">
+                  Call ID: {call.id.slice(-6)}
+                </ThemedText>
+                <View className="flex-row justify-between items-center mb-2">
+                  <ThemedText className="text-xs text-gray-500 dark:text-gray-400">
+                    Duration: <MinFormatter seconds={call.duration} />
+                  </ThemedText>
+                  <ThemedText className="text-xs text-gray-400 dark:text-gray-500">
+                    {timeAgo(call.created_at)} ago
+                  </ThemedText>
+                </View>
+
+                {/* Call transcript */}
+                {Array.isArray(call.transcript) && call.transcript.length > 0 && (
+                  <TranscriptionLog3 log={call.transcript as TranscriptionEntry[]} />
+                )}
+              </View>
+            ))}
+          </ScrollView>
+        )}
       </View>
     </Modal>
   );
