@@ -43,3 +43,7 @@ app-example
 .expo
 dist/
 web-build/
+
+# Expo Push
+# google-services.json
+roar-expo-firebase-adminsdk-fbsvc-45be4e624d.json

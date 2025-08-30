@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1097870764427",
+    "project_id": "roar-expo",
+    "storage_bucket": "roar-expo.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1097870764427:android:8681f73770965658c2278e",
+        "android_client_info": {
+          "package_name": "com.micalabs.roarai"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBe4h13Yh6bjJuPctg2w6GpT3-9ejtfkJU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
