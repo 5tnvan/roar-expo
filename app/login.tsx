@@ -294,8 +294,8 @@ export default function Login() {
       {!isAuthenticated && <View className="flex-1 items-center justify-center -mt-20 px-6">
         {/* Logo */}
         <Image
-          source={require('../assets/logo/logo.png')}
-          className="w-24 h-24 mb-6"
+          source={require('../assets/images/icon.png')}
+          className="w-24 h-24 mb-6 rounded-lg"
           resizeMode="contain"
         />
         {/* Intro Text */}

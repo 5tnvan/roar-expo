@@ -1,5 +1,4 @@
 import { PipecatProvider } from '@/components/pipecat/PipeCat';
-import Push from '@/components/Push';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import AuthProvider, { useAuth } from '@/services/providers/AuthProvider';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
@@ -13,7 +12,7 @@ export default function RootLayout() {
   return (
     <AuthProvider>
       <InnerLayout />
-      <Push />
+      {/* <Push /> */}
     </AuthProvider>
   );
 }
