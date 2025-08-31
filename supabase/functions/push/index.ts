@@ -8,7 +8,8 @@ interface Notification {
   owner_id: string
   profile_id?: string
   capsule_id?: string
-  capsule_stat_id?: string
+  capsule_views?: number
+  capsule_shares?: number
   type: string
   created_at: string
 }
@@ -63,7 +64,7 @@ async function getNotificationDetails(notif: Notification) {
       message = `@${handle} called your assistant`
       break
     case 'notif_call_msg': {
-      const seconds = notif.capsule_stat_id ? Number(notif.capsule_stat_id) : 0
+      const seconds = notif.capsule_calls ?? 0
       message = `A caller spent ${formatMinutes(seconds)} exploring your message`
       break
     }
@@ -71,12 +72,12 @@ async function getNotificationDetails(notif: Notification) {
       message = `Yay, @${handle} approved your message`
       break
     case 'notif_views': {
-      const views = notif.capsule_stat_id ?? 0
+      const views = notif.capsule_views ?? 0
       message = `Your post crossed ${views} views`
       break
     }
     case 'notif_shares': {
-      const shares = notif.capsule_stat_id ?? 0
+      const shares = notif.capsule_shares ?? 0
       message = `Your post was shared ${shares} times`
       break
     }
@@ -141,37 +142,105 @@ Deno.serve(async (req) => {
   }
 })
 
+// 1️⃣ notif_call_assistant
 // curl -X POST http://localhost:54321/functions/v1/push \
 // -H "Content-Type: application/json" \
 // -d '{
 //   "type": "INSERT",
 //   "table": "notifications",
 //   "record": {
-//     "id": "11111111-1111-1111-1111-111111111111",
+//     "id": "aaaa1111-aaaa-1111-aaaa-111111111111",
 //     "owner_id": "9d70d9d1-948a-443d-83b7-6e54d2f691fc",
 //     "profile_id": "7940654e-d601-4e68-8dbf-f64c382461c0",
-//     "capsule_id": "",
-//     "capsule_stat_id": "",
 //     "type": "notif_call_assistant",
-//     "created_at": "2025-08-31T00:00:00Z"
+//     "created_at": "2025-08-31T17:00:00Z"
 //   },
 //   "schema": "public",
 //   "old_record": null
 // }'
 
+// 2️⃣ notif_call_msg (with capsule_calls seconds)
 // curl -X POST http://localhost:54321/functions/v1/push \
 // -H "Content-Type: application/json" \
 // -d '{
 //   "type": "INSERT",
 //   "table": "notifications",
 //   "record": {
-//     "id": "22222222-2222-2222-2222-222222222222",
+//     "id": "bbbb2222-bbbb-2222-bbbb-222222222222",
 //     "owner_id": "9d70d9d1-948a-443d-83b7-6e54d2f691fc",
 //     "profile_id": "7940654e-d601-4e68-8dbf-f64c382461c0",
-//     "capsule_id": "b3907766-d3e3-4eb9-966a-e48cbb768ff7",
-//     "capsule_stat_id": "120",
+//     "capsule_calls": 350,
 //     "type": "notif_call_msg",
-//     "created_at": "2025-08-31T00:00:00Z"
+//     "created_at": "2025-08-31T17:05:00Z"
+//   },
+//   "schema": "public",
+//   "old_record": null
+// }'
+
+// 3️⃣ notif_likes
+// curl -X POST http://localhost:54321/functions/v1/push \
+// -H "Content-Type: application/json" \
+// -d '{
+//   "type": "INSERT",
+//   "table": "notifications",
+//   "record": {
+//     "id": "cccc3333-cccc-3333-cccc-333333333333",
+//     "owner_id": "9d70d9d1-948a-443d-83b7-6e54d2f691fc",
+//     "profile_id": "7940654e-d601-4e68-8dbf-f64c382461c0",
+//     "type": "notif_likes",
+//     "created_at": "2025-08-31T17:10:00Z"
+//   },
+//   "schema": "public",
+//   "old_record": null
+// }'
+
+// 4️⃣ notif_views (with capsule_views count)
+// curl -X POST http://localhost:54321/functions/v1/push \
+// -H "Content-Type: application/json" \
+// -d '{
+//   "type": "INSERT",
+//   "table": "notifications",
+//   "record": {
+//     "id": "dddd4444-dddd-4444-dddd-444444444444",
+//     "owner_id": "9d70d9d1-948a-443d-83b7-6e54d2f691fc",
+//     "capsule_id": "b3907766-d3e3-4eb9-966a-e48cbb768ff7",
+//     "capsule_views": 100,
+//     "type": "notif_views",
+//     "created_at": "2025-08-31T17:15:00Z"
+//   },
+//   "schema": "public",
+//   "old_record": null
+// }'
+
+// 5️⃣ notif_shares (with capsule_shares count)
+// curl -X POST http://localhost:54321/functions/v1/push \
+// -H "Content-Type: application/json" \
+// -d '{
+//   "type": "INSERT",
+//   "table": "notifications",
+//   "record": {
+//     "id": "eeee5555-eeee-5555-eeee-555555555555",
+//     "owner_id": "9d70d9d1-948a-443d-83b7-6e54d2f691fc",
+//     "capsule_id": "b3907766-d3e3-4eb9-966a-e48cbb768ff7",
+//     "capsule_shares": 5,
+//     "type": "notif_shares",
+//     "created_at": "2025-08-31T17:20:00Z"
+//   },
+//   "schema": "public",
+//   "old_record": null
+// }'
+
+// 6️⃣ Default / unknown type
+// curl -X POST http://localhost:54321/functions/v1/push \
+// -H "Content-Type: application/json" \
+// -d '{
+//   "type": "INSERT",
+//   "table": "notifications",
+//   "record": {
+//     "id": "ffff6666-ffff-6666-ffff-666666666666",
+//     "owner_id": "9d70d9d1-948a-443d-83b7-6e54d2f691fc",
+//     "type": "notif_unknown",
+//     "created_at": "2025-08-31T17:25:00Z"
 //   },
 //   "schema": "public",
 //   "old_record": null
