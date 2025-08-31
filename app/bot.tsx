@@ -23,7 +23,7 @@ export default function Login() {
   }, [profile]);
 
   const handleLanguageChange = async (lang: LanguageOption) => {
-    if (!isAuthenticated) {Alert.alert("Login to choose agent language")}
+    if (!isAuthenticated) {Alert.alert("Login")}
     setLanguage(lang);
     if (!user) return;
     const success = await updateProfileBotLanguage(user.id, lang.gemini_code);

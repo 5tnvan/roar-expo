@@ -6,6 +6,13 @@ export type LanguageOption = {
   gemini_code: string;   // ar-XA style
 };
 
+export type PushToken = {
+  user_id: string;
+  token: string;
+  platform: 'ios' | 'android' | 'web' | string; // platform info
+  device_id: string; // optional device identifier
+};
+
 export type Profile = {
   id: string;
   full_name: string;
@@ -14,7 +21,7 @@ export type Profile = {
   app_language?: string;
   handle: string;
   intro: string;
-  expo_push_token?: string;
+  expo_push_tokens?: PushToken[];
   subCount?: number;
   isSub?: boolean;
   capsuleCount?: number;

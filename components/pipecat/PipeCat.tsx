@@ -107,7 +107,7 @@ export const PipecatProvider: React.FC<PipecatProviderProps> = ({ children }) =>
             await client.startBotAndConnect({
                 endpoint: `${baseUrl}/api/start`, 
                 requestData: {
-                    preferred_language: profile?.language || ''  // Spanish
+                    preferred_language: profile?.bot_language || ''  // Spanish
                 }
             });
         } catch (e) {
@@ -115,7 +115,7 @@ export const PipecatProvider: React.FC<PipecatProviderProps> = ({ children }) =>
         } finally {
             setIsLoading(false);
         }
-    }, [baseUrl, createClient, profile?.language]);
+    }, [baseUrl, createClient, profile?.bot_language]);
 
     // Leave Pipecat
     const leave = useCallback(async () => {

@@ -1,12 +1,12 @@
 import { useAuth } from '@/services/providers/AuthProvider';
-import { updateProfileExpoPushToken } from '@/utils/supabase/crudProfile';
+import { PushToken } from '@/types/types';
+import { getPushToken, insertPushToken, updatePushTokenUserId } from '@/utils/supabase/crudUserPushTokens';
 import Constants from 'expo-constants';
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
-import { useEffect, useState } from 'react';
-import { Button, Platform } from 'react-native';
+import { useEffect } from 'react';
+import { Platform } from 'react-native';
 
-// Foreground notification handler
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldPlaySound: true,
@@ -16,51 +16,22 @@ Notifications.setNotificationHandler({
   }),
 });
 
-// --- Helper to send push notification to a token
-async function sendPushNotification(expoPushToken: string) {
-  if (!expoPushToken) {
-    console.error('No push token to send notification to');
-    return;
-  }
+let badgeCount = 0;
 
-  console.log('Sending push notification to token:', expoPushToken);
-  const message = {
-    to: expoPushToken,
-    sound: 'default',
-    title: 'Test Notification',
-    body: 'This came from your app!',
-    data: { someData: 'goes here' },
-  };
+/** GRANT PERMISSIONS */
+async function grantPermissions() {
+  if (!Device.isDevice) throw new Error('Must use physical device for push notifications');
 
-  try {
-    const response = await fetch('https://exp.host/--/api/v2/push/send', {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Accept-encoding': 'gzip, deflate',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(message),
-    });
-    const data = await response.json();
-    console.log('Push notification response:', data);
-  } catch (error) {
-    console.error('Error sending push notification:', error);
-  }
+  const { status: existingStatus } = await Notifications.getPermissionsAsync();
+  if (existingStatus === 'granted') return 'granted';
+
+  const { status } = await Notifications.requestPermissionsAsync();
+  return status;
 }
 
-// --- Error handler
-function handleRegistrationError(errorMessage: string) {
-  console.error('Push registration error:', errorMessage);
-  alert(errorMessage);
-  throw new Error(errorMessage);
-}
-
-// --- Register device & get token
-async function registerForPushNotificationsAsync() {
-  console.log('Starting push notification registration...');
+/** REGISTER PUSH TOKEN */
+export async function registerPush(user_id: string): Promise<string | null> {
   if (Platform.OS === 'android') {
-    console.log('Setting Android notification channel...');
     await Notifications.setNotificationChannelAsync('default', {
       name: 'default',
       importance: Notifications.AndroidImportance.MAX,
@@ -69,105 +40,130 @@ async function registerForPushNotificationsAsync() {
     });
   }
 
-  if (!Device.isDevice) {
-    handleRegistrationError('Must use physical device for push notifications');
-    return;
-  }
-
-  console.log('Checking existing permissions...');
-  const { status: existingStatus } = await Notifications.getPermissionsAsync();
-  console.log('Existing permission status:', existingStatus);
-  let finalStatus = existingStatus;
-
-  if (existingStatus !== 'granted') {
-    console.log('Requesting permissions...');
-    const { status } = await Notifications.requestPermissionsAsync();
-    finalStatus = status;
-  }
-
-  if (finalStatus !== 'granted') {
-    handleRegistrationError('Permission not granted to get push token for push notification!');
-    return;
-  }
+  const finalStatus = await grantPermissions();
+  if (finalStatus !== 'granted') throw new Error('Permission not granted to get push token!');
 
   const projectId =
     Constants?.expoConfig?.extra?.eas?.projectId ?? Constants?.easConfig?.projectId;
-  console.log('Project ID:', projectId);
-  if (!projectId) {
-    handleRegistrationError('Project ID not found');
-    return;
-  }
+  if (!projectId) throw new Error('Project ID not found');
 
-  try {
-    console.log('Getting Expo push token...');
-    const pushTokenString = (await Notifications.getExpoPushTokenAsync({ projectId })).data;
-    console.log('Expo push token obtained:', pushTokenString);
-    return pushTokenString;
-  } catch (e: unknown) {
-    handleRegistrationError(`Failed to get push token: ${e}`);
+  const tokenData = await Notifications.getExpoPushTokenAsync({ projectId });
+  const pushToken: PushToken = {
+    user_id,
+    token: tokenData.data,
+    platform: Platform.OS,
+    device_id: Device.modelName || 'unknown-device',
+  };
+
+  const existingToken = await getPushToken(tokenData.data);
+
+  console.log(tokenData.data);
+  console.log(existingToken?.user_id, user_id);
+
+  if (existingToken) {
+    if (existingToken.user_id === user_id) {
+      // Token already exists for this user, do nothing
+      return null;
+    } else {
+      // Token exists but belongs to another user, update it
+      const updated = await updatePushTokenUserId(pushToken.token, user_id);
+      if (updated && typeof updated !== 'boolean') return updated.token;
+      return null;
+    }
+  } else {
+    // Token does not exist, insert new
+    const fresh = await insertPushToken(user_id, pushToken);
+    if (fresh && typeof fresh !== 'boolean') return fresh.token;
+    return null;
   }
 }
 
-export default function App() {
-  const { profile } = useAuth();
-  const [expoPushToken, setExpoPushToken] = useState('');
-  const [notification, setNotification] = useState<Notifications.Notification | undefined>(
-    undefined
-  );
 
-  console.log('profile', profile?.expo_push_token);
+/** SEND PUSH NOTIFICATION */
+export async function sendPush(tokens: PushToken[]) {
+  if (!tokens || tokens.length === 0) return console.log('No tokens to send notification to');
+
+  badgeCount += 1;
+  await Notifications.setBadgeCountAsync(badgeCount);
+
+  await Promise.all(
+    tokens.map(async (t) => {
+      const message = {
+        to: t.token,
+        sound: 'default',
+        title: 'Test Notification',
+        body: 'This came from your app!',
+        data: { someData: 'goes here' },
+        badge: badgeCount,
+      };
+
+      try {
+        const res = await fetch('https://exp.host/--/api/v2/push/send', {
+          method: 'POST',
+          headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
+          body: JSON.stringify(message),
+        });
+        const data = await res.json();
+        console.log('Notification sent to', t.token, data);
+      } catch (err) {
+        console.error('Error sending notification to token:', t.token, err);
+      }
+    })
+  );
+}
+
+/** COMPONENT */
+export default function Push() {
+  const { profile, refetchProfile } = useAuth();
 
   useEffect(() => {
-    async function initPushToken() {
-      if (profile?.expo_push_token) {
-        console.log('Using existing push token from profile:', profile.expo_push_token);
-        setExpoPushToken(profile.expo_push_token);
-      } else {
-        console.log('No push token in profile, registering new one...');
-        try {
-          const token = await registerForPushNotificationsAsync();
-          if (token) {
-            console.log('New push token obtained:', token);
-            setExpoPushToken(token);
+    Notifications.setBadgeCountAsync(0);
+    badgeCount = 0;
+  }, []);
 
-            // TODO: update profile in your backend / Supabase
-            // Example:
-            // await updateProfile({ expo_push_token: token });
-            updateProfileExpoPushToken(profile?.id || '', token);
-            console.log('Profile should be updated with new token here');
-          }
-        } catch (error) {
-          console.error('Failed to register push token:', error);
-        }
+  useEffect(() => {
+    if (!profile?.id) return;
+
+    async function initPushToken() {
+      try {
+        const token = await registerPush(profile?.id || '');
+        if (!token) return;
+        console.log("refetching");
+        await refetchProfile();
+        console.log('Inserted or updated push token for user', profile?.id, token);
+      } catch (err) {
+        console.error('Failed to register push token:', err);
       }
     }
 
     initPushToken();
 
-    console.log('Setting up notification listeners...');
-    const notificationListener = Notifications.addNotificationReceivedListener(notification => {
+    const notificationListener = Notifications.addNotificationReceivedListener((notification) => {
       console.log('Notification received:', notification);
-      setNotification(notification);
+      Notifications.setBadgeCountAsync(0);
+      badgeCount = 0;
     });
 
-    const responseListener = Notifications.addNotificationResponseReceivedListener(response => {
+    const responseListener = Notifications.addNotificationResponseReceivedListener((response) => {
       console.log('Notification response received:', response);
     });
 
     return () => {
-      console.log('Removing listeners...');
       notificationListener.remove();
       responseListener.remove();
     };
-  }, [profile]);
+  }, [profile, refetchProfile]);
 
   return (
-    <Button
-        title="Press to Send Notification"
+    <>
+    {/* <SafeAreaView>
+      <Button
+        title="Send Notification"
         onPress={async () => {
-          console.log('Send notification button pressed...');
-          await sendPushNotification(expoPushToken);
+          await sendPush(profile?.expo_push_tokens || []);
         }}
       />
+    </SafeAreaView> */}
+    </>
   );
 }

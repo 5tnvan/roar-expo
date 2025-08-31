@@ -64,11 +64,11 @@ async function getNotificationDetails(notif: Notification) {
       break
     case 'notif_call_msg': {
       const seconds = notif.capsule_stat_id ? Number(notif.capsule_stat_id) : 0
-      message = `@${handle} spent ${formatMinutes(seconds)} exploring your message`
+      message = `A caller spent ${formatMinutes(seconds)} exploring your message`
       break
     }
     case 'notif_likes':
-      message = `@${handle} approved your message`
+      message = `Yay, @${handle} approved your message`
       break
     case 'notif_views': {
       const views = notif.capsule_stat_id ?? 0
@@ -98,37 +98,40 @@ Deno.serve(async (req) => {
       return new Response(JSON.stringify({ message: 'No action taken' }), { status: 200 })
     }
 
-    // Fetch owner's push token
-    const { data: owner } = await supabase
-      .from('profile')
-      .select('expo_push_token')
-      .eq('id', payload.record.owner_id)
-      .single()
+    // Fetch ALL push tokens for this user
+    const { data: tokens, error: tokenError } = await supabase
+      .from('user_push_tokens')
+      .select('token')
+      .eq('user_id', payload.record.owner_id)
 
-    if (!owner?.expo_push_token) {
-      return new Response(JSON.stringify({ message: 'No push token found' }), { status: 200 })
+    if (tokenError) {
+      console.error('Error fetching tokens:', tokenError)
+      return new Response(JSON.stringify({ error: tokenError.message }), { status: 500 })
+    }
+
+    if (!tokens || tokens.length === 0) {
+      return new Response(JSON.stringify({ message: 'No push tokens found' }), { status: 200 })
     }
 
     // Build notification message & metadata
     const { message, handle, avatar_url, deep_link } = await getNotificationDetails(payload.record)
 
-    // Send push notification via Expo
+    // Prepare messages for all tokens
+    const expoMessages = tokens.map((t) => ({
+      to: t.token,
+      sound: 'default',
+      body: message,
+      data: { handle, avatar_url, url: deep_link },
+    }))
+
+    // Send batched push notifications via Expo
     const res = await fetch('https://exp.host/--/api/v2/push/send', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${Deno.env.get('EXPO_PUBLIC_ACCESS_TOKEN')}`,
       },
-      body: JSON.stringify({
-        to: owner.expo_push_token,
-        sound: 'default',
-        body: message,
-        data: {
-          handle,
-          avatar_url,
-          url: deep_link,
-        },
-      }),
+      body: JSON.stringify(expoMessages),
     }).then((r) => r.json())
 
     return new Response(JSON.stringify(res), { headers: { 'Content-Type': 'application/json' } })

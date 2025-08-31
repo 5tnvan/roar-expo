@@ -33,8 +33,6 @@ export default function AuthGoogle() {
           provider: 'google',
           token: idToken,
         });
-
-        router.back(); // navigate back
       } else {
         console.log('Sign-in cancelled:', userInfo);
       }
@@ -58,7 +56,7 @@ export default function AuthGoogle() {
           onPress={handleGoogleSignIn}
           onPressIn={handlePressIn}
           onPressOut={handlePressOut}
-          className={`flex-row items-center justify-center gap-2 px-6 py-3 rounded-3xl ${isDark ? "bg-gray-800" : "bg-gray-200"}`}
+          className={`flex-row items-center justify-center gap-2 px-6 py-3 rounded-3xl ${isDark ? "bg-gray-800" : "bg-gray-50"}`}
         >
           <Ionicons name="logo-google" size={20} color={isDark ? "white" : "dark"} />
           <ThemedText className="font-medium text-white text-lg">Sign in with Google</ThemedText>

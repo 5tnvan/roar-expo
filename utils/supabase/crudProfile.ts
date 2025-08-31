@@ -1,5 +1,5 @@
 import { supabase } from "@/lib/supabase";
-import { Profile } from "@/types/types";
+import { Profile, PushToken } from "@/types/types";
 
 /**
  * Fetch a profile by ID with subscriber count, capsule count, and whether a specific user is subscribed
@@ -51,7 +51,8 @@ export const fetchProfile = async (
       *,
       subCount:sub!sub_account_id_fkey(count),
       isSub:sub!sub_account_id_fkey(subscriber_id),
-      capsuleCount:capsule!capsule_owner_id_fkey(count)
+      capsuleCount:capsule!capsule_owner_id_fkey(count),
+      user_push_tokens:user_push_tokens_user_id_fkey(token, platform, device_id, last_used)
     `)
     .eq("id", user_id)
     .single();
@@ -70,7 +71,7 @@ export const fetchProfile = async (
     app_language: data.app_language,
     bot_language: data.bot_language,
     handle: data.handle,
-    expo_push_token: data.expo_push_token,
+    expo_push_tokens: data.user_push_tokens as PushToken[] || [],
     intro: data.intro,
     subCount: data.subCount?.[0]?.count || 0,
     isSub: data.isSub?.some((s: any) => s.subscriber_id === user_id) || false,
@@ -90,7 +91,8 @@ export const fetchProfileByHandle = async (
       *,
       subCount:sub!sub_account_id_fkey(count),
       isSub:sub!sub_account_id_fkey(subscriber_id),
-      capsuleCount:capsule!capsule_owner_id_fkey(count)
+      capsuleCount:capsule!capsule_owner_id_fkey(count),
+      user_push_tokens:user_push_tokens_user_id_fkey(token, platform, device_id, last_used)
     `)
     .eq("handle", handle)
     .single();
@@ -107,7 +109,7 @@ export const fetchProfileByHandle = async (
     full_name: data.full_name,
     avatar_url: data.avatar_url,
     handle: data.handle,
-    expo_push_token: '',
+    expo_push_tokens: data.user_push_tokens as PushToken[] || [],
     intro: data.intro,
     subCount: data.subCount?.[0]?.count || 0,
     isSub: data.isSub?.some((s: any) => s.subscriber_id === user_id) || false,

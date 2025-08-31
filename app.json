@@ -15,7 +15,8 @@
         "UIBackgroundModes": [
           "audio"
         ]
-      }
+      },
+      "appleTeamId": "ZZY479K9QT"
     },
     "android": {
       "adaptiveIcon": {

@@ -47,3 +47,7 @@ web-build/
 # Expo Push
 # google-services.json
 roar-expo-firebase-adminsdk-fbsvc-45be4e624d.json
+
+#adnroid/ios backups
+android_backup
+ios_backup

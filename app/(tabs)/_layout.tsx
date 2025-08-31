@@ -17,8 +17,9 @@ import { TranscriptionEntry } from "@/types/types";
 import { BlurView } from "expo-blur";
 import { Link } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
-import { AppState, Image, Platform, Text, useColorScheme, View } from "react-native";
+import { AppState, Image, Platform, Text, TouchableOpacity, useColorScheme, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import LoginModal from "../login";
 import MainCamera, { CameraType } from "./camera";
 
 
@@ -40,6 +41,8 @@ export default function Layout() {
   //content
   const { isAuthenticated, user } = useAuth();
   const { profile } = useAuth();
+  //login
+  const [loginVisible, setLoginVisible] = useState(false);
   //status
   const [status, setStatus] = useState(`Hi ${user?.user_metadata.full_name}, what would you like to explore?`);
   //photo
@@ -326,6 +329,11 @@ export default function Layout() {
 
   return (
     <>
+    {/* Login modal */}
+      <LoginModal
+        visible={loginVisible}
+        onClose={() => setLoginVisible(false)}
+      />
       <View className="camera-view flex-1 relative bg-slate-600">
         {cameraActive ? (
           <MainCamera
@@ -363,13 +371,11 @@ export default function Layout() {
         >
           <SafeAreaView edges={['right', 'top', 'left']} className="flex flex-row py-5 items-top justify-between">
             {isAuthenticated ? (
-              <Link href="/login">
+              <Link href="/account">
                 <Avatar uri={profile?.avatar_url || ''} size={40} showTick />
               </Link>
             ) : (
-              <Link href="/login" className="my-auto">
-                <Text className="text-white text-lg font-bold">Login</Text>
-              </Link>
+              <TouchableOpacity onPress={() => setLoginVisible(true)}><Text className="text-white text-lg font-bold">Login</Text></TouchableOpacity>
             )}
 
             <View className="flex-1 mx-3 justify-center">
