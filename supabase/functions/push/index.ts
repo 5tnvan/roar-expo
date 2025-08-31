@@ -68,7 +68,7 @@ async function getNotificationDetails(notif: Notification) {
       message = `A caller spent ${formatMinutes(seconds)} exploring your message`
       break
     }
-    case 'notif_likes':
+    case 'notif_like':
       message = `Yay, @${handle} approved your message`
       break
     case 'notif_views': {
