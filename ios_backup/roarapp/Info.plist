@@ -27,14 +27,14 @@
       <dict>
         <key>CFBundleURLSchemes</key>
         <array>
-          <string>roarexpo</string>
+          <string>roarapp</string>
           <string>com.micalabs.roarai</string>
         </array>
       </dict>
       <dict>
         <key>CFBundleURLSchemes</key>
         <array>
-          <string>exp+roar-expo</string>
+          <string>exp+roarapp</string>
         </array>
       </dict>
       <dict>

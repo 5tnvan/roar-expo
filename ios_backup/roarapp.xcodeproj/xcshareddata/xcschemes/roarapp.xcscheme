@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-               BuildableName = "roarexpo.app"
-               BlueprintName = "roarexpo"
-               ReferencedContainer = "container:roarexpo.xcodeproj">
+               BuildableName = "roarapp.app"
+               BlueprintName = "roarapp"
+               ReferencedContainer = "container:roarapp.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "00E356ED1AD99517003FC87E"
-               BuildableName = "roarexpoTests.xctest"
-               BlueprintName = "roarexpoTests"
-               ReferencedContainer = "container:roarexpo.xcodeproj">
+               BuildableName = "roarappTests.xctest"
+               BlueprintName = "roarappTests"
+               ReferencedContainer = "container:roarapp.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -55,9 +55,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "roarexpo.app"
-            BlueprintName = "roarexpo"
-            ReferencedContainer = "container:roarexpo.xcodeproj">
+            BuildableName = "roarapp.app"
+            BlueprintName = "roarapp"
+            ReferencedContainer = "container:roarapp.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -72,9 +72,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "roarexpo.app"
-            BlueprintName = "roarexpo"
-            ReferencedContainer = "container:roarexpo.xcodeproj">
+            BuildableName = "roarapp.app"
+            BlueprintName = "roarapp"
+            ReferencedContainer = "container:roarapp.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

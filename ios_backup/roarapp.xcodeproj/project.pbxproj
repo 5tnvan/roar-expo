@@ -11,25 +11,25 @@
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
 		47C1EC2E23A204E4C7FD280F /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 299220A1ED7EB9C29AADC069 /* PrivacyInfo.xcprivacy */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
-		C696182447C93FB49CA46BC5 /* libPods-roarexpo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 038D9C3D3312CCE844F1F363 /* libPods-roarexpo.a */; };
+		C696182447C93FB49CA46BC5 /* libPods-roarapp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 038D9C3D3312CCE844F1F363 /* libPods-roarapp.a */; };
 		DF582968EB48B14777DF9FEB /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A73F1988E6BAF298659790A /* ExpoModulesProvider.swift */; };
 		F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11748412D0307B40044C1D9 /* AppDelegate.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		038D9C3D3312CCE844F1F363 /* libPods-roarexpo.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-roarexpo.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		0A73F1988E6BAF298659790A /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-roarexpo/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
-		13B07F961A680F5B00A75B9A /* roarexpo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = roarexpo.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = roarexpo/Images.xcassets; sourceTree = "<group>"; };
-		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = roarexpo/Info.plist; sourceTree = "<group>"; };
-		299220A1ED7EB9C29AADC069 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = roarexpo/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-		A79A966C722A2B02461FB5AA /* Pods-roarexpo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-roarexpo.debug.xcconfig"; path = "Target Support Files/Pods-roarexpo/Pods-roarexpo.debug.xcconfig"; sourceTree = "<group>"; };
-		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = roarexpo/SplashScreen.storyboard; sourceTree = "<group>"; };
+		038D9C3D3312CCE844F1F363 /* libPods-roarapp.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-roarapp.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		0A73F1988E6BAF298659790A /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-roarapp/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
+		13B07F961A680F5B00A75B9A /* roarapp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = roarapp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = roarapp/Images.xcassets; sourceTree = "<group>"; };
+		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = roarapp/Info.plist; sourceTree = "<group>"; };
+		299220A1ED7EB9C29AADC069 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = roarapp/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		A79A966C722A2B02461FB5AA /* Pods-roarapp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-roarapp.debug.xcconfig"; path = "Target Support Files/Pods-roarapp/Pods-roarapp.debug.xcconfig"; sourceTree = "<group>"; };
+		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = roarapp/SplashScreen.storyboard; sourceTree = "<group>"; };
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
-		E393DF1ED476BA62F1681033 /* Pods-roarexpo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-roarexpo.release.xcconfig"; path = "Target Support Files/Pods-roarexpo/Pods-roarexpo.release.xcconfig"; sourceTree = "<group>"; };
+		E393DF1ED476BA62F1681033 /* Pods-roarapp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-roarapp.release.xcconfig"; path = "Target Support Files/Pods-roarapp/Pods-roarapp.release.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
-		F11748412D0307B40044C1D9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = roarexpo/AppDelegate.swift; sourceTree = "<group>"; };
-		F11748442D0722820044C1D9 /* roarexpo-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "roarexpo-Bridging-Header.h"; path = "roarexpo/roarexpo-Bridging-Header.h"; sourceTree = "<group>"; };
+		F11748412D0307B40044C1D9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = roarapp/AppDelegate.swift; sourceTree = "<group>"; };
+		F11748442D0722820044C1D9 /* roarapp-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "roarapp-Bridging-Header.h"; path = "roarapp/roarapp-Bridging-Header.h"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -37,32 +37,32 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C696182447C93FB49CA46BC5 /* libPods-roarexpo.a in Frameworks */,
+				C696182447C93FB49CA46BC5 /* libPods-roarapp.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		13B07FAE1A68108700A75B9A /* roarexpo */ = {
+		13B07FAE1A68108700A75B9A /* roarapp */ = {
 			isa = PBXGroup;
 			children = (
 				F11748412D0307B40044C1D9 /* AppDelegate.swift */,
-				F11748442D0722820044C1D9 /* roarexpo-Bridging-Header.h */,
+				F11748442D0722820044C1D9 /* roarapp-Bridging-Header.h */,
 				BB2F792B24A3F905000567C9 /* Supporting */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */,
 				299220A1ED7EB9C29AADC069 /* PrivacyInfo.xcprivacy */,
 			);
-			name = roarexpo;
+			name = roarapp;
 			sourceTree = "<group>";
 		};
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				038D9C3D3312CCE844F1F363 /* libPods-roarexpo.a */,
+				038D9C3D3312CCE844F1F363 /* libPods-roarapp.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -70,19 +70,19 @@
 		6B0A4373FED637F07C260ECC /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				A79A966C722A2B02461FB5AA /* Pods-roarexpo.debug.xcconfig */,
-				E393DF1ED476BA62F1681033 /* Pods-roarexpo.release.xcconfig */,
+				A79A966C722A2B02461FB5AA /* Pods-roarapp.debug.xcconfig */,
+				E393DF1ED476BA62F1681033 /* Pods-roarapp.release.xcconfig */,
 			);
 			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
-		716DBAA999CF5E161F665366 /* roarexpo */ = {
+		716DBAA999CF5E161F665366 /* roarapp */ = {
 			isa = PBXGroup;
 			children = (
 				0A73F1988E6BAF298659790A /* ExpoModulesProvider.swift */,
 			);
-			name = roarexpo;
+			name = roarapp;
 			sourceTree = "<group>";
 		};
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
@@ -95,7 +95,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
-				13B07FAE1A68108700A75B9A /* roarexpo */,
+				13B07FAE1A68108700A75B9A /* roarapp */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
@@ -110,7 +110,7 @@
 		83CBBA001A601CBA00E9B192 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				13B07F961A680F5B00A75B9A /* roarexpo.app */,
+				13B07F961A680F5B00A75B9A /* roarapp.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -121,13 +121,13 @@
 				BB2F792C24A3F905000567C9 /* Expo.plist */,
 			);
 			name = Supporting;
-			path = roarexpo/Supporting;
+			path = roarapp/Supporting;
 			sourceTree = "<group>";
 		};
 		DC5A033DA1B84AA81FA5C581 /* ExpoModulesProviders */ = {
 			isa = PBXGroup;
 			children = (
-				716DBAA999CF5E161F665366 /* roarexpo */,
+				716DBAA999CF5E161F665366 /* roarapp */,
 			);
 			name = ExpoModulesProviders;
 			sourceTree = "<group>";
@@ -135,9 +135,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		13B07F861A680F5B00A75B9A /* roarexpo */ = {
+		13B07F861A680F5B00A75B9A /* roarapp */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "roarexpo" */;
+			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "roarapp" */;
 			buildPhases = (
 				08A4A3CD28434E44B6B9DE2E /* [CP] Check Pods Manifest.lock */,
 				79C0AD75EDA4BABE24889365 /* [Expo] Configure project */,
@@ -152,9 +152,9 @@
 			);
 			dependencies = (
 			);
-			name = roarexpo;
-			productName = roarexpo;
-			productReference = 13B07F961A680F5B00A75B9A /* roarexpo.app */;
+			name = roarapp;
+			productName = roarapp;
+			productReference = 13B07F961A680F5B00A75B9A /* roarapp.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -172,7 +172,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "roarexpo" */;
+			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "roarapp" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -185,7 +185,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				13B07F861A680F5B00A75B9A /* roarexpo */,
+				13B07F861A680F5B00A75B9A /* roarapp */,
 			);
 		};
 /* End PBXProject section */
@@ -235,7 +235,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-roarexpo-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-roarapp-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -248,7 +248,7 @@
 			files = (
 			);
 			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-roarexpo/Pods-roarexpo-frameworks.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-roarapp/Pods-roarapp-frameworks.sh",
 				"${PODS_XCFRAMEWORKS_BUILD_DIR}/JitsiWebRTC/WebRTC.framework/WebRTC",
 				"${PODS_XCFRAMEWORKS_BUILD_DIR}/ReactNativeDailyJSScreenShareExtension/ReactNativeDailyJSScreenShareExtension.framework/ReactNativeDailyJSScreenShareExtension",
 				"${PODS_XCFRAMEWORKS_BUILD_DIR}/hermes-engine/Pre-built/hermes.framework/hermes",
@@ -261,7 +261,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-roarexpo/Pods-roarexpo-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-roarapp/Pods-roarapp-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		79C0AD75EDA4BABE24889365 /* [Expo] Configure project */ = {
@@ -281,7 +281,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# This script configures Expo modules and generates the modules provider file.\nbash -l -c \"./Pods/Target\\ Support\\ Files/Pods-roarexpo/expo-configure-project.sh\"\n";
+			shellScript = "# This script configures Expo modules and generates the modules provider file.\nbash -l -c \"./Pods/Target\\ Support\\ Files/Pods-roarapp/expo-configure-project.sh\"\n";
 		};
 		800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -289,7 +289,7 @@
 			files = (
 			);
 			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-roarexpo/Pods-roarexpo-resources.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-roarapp/Pods-roarapp-resources.sh",
 				"${PODS_CONFIGURATION_BUILD_DIR}/AppAuth/AppAuthCore_Privacy.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/EXApplication/ExpoApplication_privacy.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/EXConstants/EXConstants.bundle",
@@ -344,7 +344,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-roarexpo/Pods-roarexpo-resources.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-roarapp/Pods-roarapp-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -364,11 +364,11 @@
 /* Begin XCBuildConfiguration section */
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = A79A966C722A2B02461FB5AA /* Pods-roarexpo.debug.xcconfig */;
+			baseConfigurationReference = A79A966C722A2B02461FB5AA /* Pods-roarapp.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = roarexpo/roarexpo.entitlements;
+				CODE_SIGN_ENTITLEMENTS = roarapp/roarapp.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -378,7 +378,7 @@
 					"$(inherited)",
 					"FB_SONARKIT_ENABLED=1",
 				);
-				INFOPLIST_FILE = roarexpo/Info.plist;
+				INFOPLIST_FILE = roarapp/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -392,8 +392,8 @@
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = com.micalabs.roarai;
-				PRODUCT_NAME = roarexpo;
-				SWIFT_OBJC_BRIDGING_HEADER = "roarexpo/roarexpo-Bridging-Header.h";
+				PRODUCT_NAME = roarapp;
+				SWIFT_OBJC_BRIDGING_HEADER = "roarapp/roarapp-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -403,16 +403,16 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = E393DF1ED476BA62F1681033 /* Pods-roarexpo.release.xcconfig */;
+			baseConfigurationReference = E393DF1ED476BA62F1681033 /* Pods-roarapp.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = roarexpo/roarexpo.entitlements;
+				CODE_SIGN_ENTITLEMENTS = roarapp/roarapp.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = ZZY479K9QT;
-				INFOPLIST_FILE = roarexpo/Info.plist;
+				INFOPLIST_FILE = roarapp/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -426,8 +426,8 @@
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
 				PRODUCT_BUNDLE_IDENTIFIER = com.micalabs.roarai;
-				PRODUCT_NAME = roarexpo;
-				SWIFT_OBJC_BRIDGING_HEADER = "roarexpo/roarexpo-Bridging-Header.h";
+				PRODUCT_NAME = roarapp;
+				SWIFT_OBJC_BRIDGING_HEADER = "roarapp/roarapp-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
@@ -561,7 +561,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "roarexpo" */ = {
+		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "roarapp" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				13B07F941A680F5B00A75B9A /* Debug */,
@@ -570,7 +570,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "roarexpo" */ = {
+		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "roarapp" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				83CBBA201A601CBA00E9B192 /* Debug */,

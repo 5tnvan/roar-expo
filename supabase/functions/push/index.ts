@@ -52,9 +52,9 @@ async function getNotificationDetails(notif: Notification) {
   }
 
   if (notif.capsule_id) {
-    deep_link = `roarexpo://capsule/${notif.capsule_id}`
+    deep_link = `roarapp://capsule/${notif.capsule_id}`
   } else if (notif.profile_id) {
-    deep_link = `roarexpo://profile/${notif.profile_id}`
+    deep_link = `roarapp://profile/${notif.profile_id}`
   }
 
   let message = ''

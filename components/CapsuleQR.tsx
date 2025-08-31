@@ -16,7 +16,7 @@ export default function CapsuleQR({
   const isDark = useColorScheme() === "dark";
 
   // Deep link for installed app
-  const deepLink = `roarexpo://capsule/${capsuleId}`;
+  const deepLink = `roarapp://capsule/${capsuleId}`;
 
   // Local fallback image (must exist)
   const fallbackLogo = require("../assets/logo/logo.png");
