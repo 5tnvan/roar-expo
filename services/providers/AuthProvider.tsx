@@ -1,6 +1,6 @@
 import { supabase } from '@/lib/supabase';
 import { Profile } from '@/types/types';
-import { fetchProfileByUserId } from '@/utils/supabase/crudProfile';
+import { fetchProfile } from '@/utils/supabase/crudProfile';
 import { Session, User } from '@supabase/supabase-js';
 import { PropsWithChildren, createContext, useContext, useEffect, useState } from 'react';
 
@@ -25,7 +25,7 @@ export default function AuthProvider({ children }: PropsWithChildren) {
   const [profile, setProfile] = useState<Profile | null>(null);
 
   const loadProfile = async (userId: string) => {
-    const data = await fetchProfileByUserId(userId, userId);
+    const data = await fetchProfile(userId);
     if (data) setProfile(data);
     else setProfile(null);
   };

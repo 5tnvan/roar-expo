@@ -34,11 +34,10 @@ export const useAllCapsules = () => {
   };
 
   const fetchCapsules = async () => {
-    if (!user?.id) return;
     setIsLoading(true);
 
     try {
-      const pageCapsules = await fetchAllCapsules(user.id, page, range);
+      const pageCapsules = await fetchAllCapsules(user?.id || '', page, range);
       if (!pageCapsules) return;
 
       // Merge new capsules with existing ones,

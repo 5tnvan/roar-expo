@@ -10,9 +10,11 @@ export type Profile = {
   id: string;
   full_name: string;
   avatar_url: string;
-  language: string;
+  bot_language?: string;
+  app_language?: string;
   handle: string;
   intro: string;
+  expo_push_token?: string;
   subCount?: number;
   isSub?: boolean;
   capsuleCount?: number;

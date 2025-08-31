@@ -32,8 +32,45 @@ export const fetchProfileByUserId = async (
     id: data.id,
     full_name: data.full_name,
     avatar_url: data.avatar_url,
-    language: data.language,
     handle: data.handle,
+    intro: data.intro,
+    subCount: data.subCount?.[0]?.count || 0,
+    isSub: data.isSub?.some((s: any) => s.subscriber_id === user_id) || false,
+    capsuleCount: data.capsuleCount?.[0]?.count || 0,
+  };
+
+  return profile;
+};
+
+export const fetchProfile = async (
+  user_id: string
+): Promise<Profile | null> => {
+  const { data, error } = await supabase
+    .from("profile")
+    .select(`
+      *,
+      subCount:sub!sub_account_id_fkey(count),
+      isSub:sub!sub_account_id_fkey(subscriber_id),
+      capsuleCount:capsule!capsule_owner_id_fkey(count)
+    `)
+    .eq("id", user_id)
+    .single();
+
+  if (error) {
+    console.error("Error fetching profile:", error);
+    return null;
+  }
+
+  if (!data) return null;
+
+  const profile: Profile = {
+    id: data.id,
+    full_name: data.full_name,
+    avatar_url: data.avatar_url,
+    app_language: data.app_language,
+    bot_language: data.bot_language,
+    handle: data.handle,
+    expo_push_token: data.expo_push_token,
     intro: data.intro,
     subCount: data.subCount?.[0]?.count || 0,
     isSub: data.isSub?.some((s: any) => s.subscriber_id === user_id) || false,
@@ -69,8 +106,8 @@ export const fetchProfileByHandle = async (
     id: data.id,
     full_name: data.full_name,
     avatar_url: data.avatar_url,
-    language: data.language,
     handle: data.handle,
+    expo_push_token: '',
     intro: data.intro,
     subCount: data.subCount?.[0]?.count || 0,
     isSub: data.isSub?.some((s: any) => s.subscriber_id === user_id) || false,
@@ -108,7 +145,8 @@ export const searchProfiles = async (
     id: p.id,
     full_name: p.full_name,
     avatar_url: p.avatar_url,
-    language: p.language,
+    bot_language: p.bot_language,
+    app_language: p.app_language,
     handle: p.handle,
     intro: p.intro,
     subCount: p.subCount?.[0]?.count || 0,
@@ -124,10 +162,24 @@ export const searchProfiles = async (
  * @param langCode - the new language gemini_code
  * @returns boolean - true if update succeeded, false if failed
  */
-export const updateProfileLanguage = async (userId: string, langCode: string): Promise<boolean> => {
+export const updateProfileAppLanguage = async (userId: string, langCode: string): Promise<boolean> => {
   const { error } = await supabase
     .from("profile")
-    .update({ language: langCode })
+    .update({ app_language: langCode })
+    .eq("id", userId);
+
+  if (error) {
+    console.error("Failed to update language:", error.message);
+    return false;
+  }
+
+  return true;
+};
+
+export const updateProfileBotLanguage = async (userId: string, langCode: string): Promise<boolean> => {
+  const { error } = await supabase
+    .from("profile")
+    .update({ bot_language: langCode })
     .eq("id", userId);
 
   if (error) {
@@ -142,6 +194,20 @@ export const updateProfileAvatar = async (userId: string, avatar_url: string): P
   const { error } = await supabase
     .from("profile")
     .update({ avatar_url: avatar_url })
+    .eq("id", userId);
+
+  if (error) {
+    console.error("Failed to update language:", error.message);
+    return false;
+  }
+
+  return true;
+};
+
+export const updateProfileExpoPushToken = async (userId: string, expo_push_token: string): Promise<boolean> => {
+  const { error } = await supabase
+    .from("profile")
+    .update({ expo_push_token })
     .eq("id", userId);
 
   if (error) {

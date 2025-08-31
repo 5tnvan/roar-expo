@@ -1,3 +1,4 @@
+import { Link } from "expo-router";
 import React, { useEffect, useRef } from "react";
 import { Animated, Easing, Image, useColorScheme } from "react-native";
 import { usePipecat } from "./PipeCat";
@@ -72,6 +73,7 @@ export default function BotVisualizer({ size = 40, logoSize = 35 }: BotVisualize
   const blobColor = colorScheme === "dark" ? "#ffffff" : inCall ? "#ffffff" : "#e0e0e0";
 
   return (
+    <Link href="./bot">
     <Animated.View
       style={{
         width: size,
@@ -93,5 +95,6 @@ export default function BotVisualizer({ size = 40, logoSize = 35 }: BotVisualize
         style={{ width: logoSize, height: logoSize, resizeMode: 'contain', borderRadius: logoSize / 2 }}
       />
     </Animated.View>
+    </Link>
   );
 }

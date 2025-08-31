@@ -7,6 +7,7 @@ import { usePipecat } from "@/components/pipecat/PipeCat";
 import TranscriptionLog from "@/components/pipecat/TranscriptionLog";
 import TranscriptionLog2 from "@/components/pipecat/TranscriptionLog2";
 import PromptInput from "@/components/PromptInput";
+import ScrollableMenu from "@/components/ScrollableMenu";
 import BreathingBackground from "@/components/ui/FluidAnim";
 import PillButton from "@/components/ui/PillButton";
 import SnapButton from "@/components/ui/SnapButton";
@@ -16,18 +17,10 @@ import { TranscriptionEntry } from "@/types/types";
 import { BlurView } from "expo-blur";
 import { Link } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
-import { AppState, Image, Platform, ScrollView, Text, TouchableOpacity, useColorScheme, View } from "react-native";
+import { AppState, Image, Platform, Text, useColorScheme, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import MainCamera, { CameraType } from "./camera";
 
-const tabScreens = [
-  "CALL",
-  "CREATED BY ME",
-  "MY FEED",
-  "EXPLORE",
-  "SEARCH",
-  "I APPROVED"
-];
 
 // Tells Supabase Auth to continuously refresh the session automatically if
 // the app is in the foreground. When this is added, you will continue to receive
@@ -163,7 +156,7 @@ export default function Layout() {
     } else if (isAuthenticated && !inCall) {
       setStatus(`Hi ${profile?.full_name}, what would you like to explore?`);
     } else if (!isAuthenticated) {
-      setStatus(`Welcome to Roar!`);
+      setStatus(`Hey, I'm Roar. Let's start?`);
     }
   }, [inCall, openCapsule, isAuthenticated, profile]);
 
@@ -406,19 +399,13 @@ export default function Layout() {
             <View className="absolute bottom-3 right-3 z-10">
               <PillButton />
             </View>
-
-
-
             <View className="layer-1 flex flex-row justify-between items-end mx-2 mb-3">
               <View className="left-image">
                 {photoUri && (
                   <PhotoSnap photoUri={detectedPhoto!} onClose={() => setPhotoUri(null)} />
                 )}
               </View>
-
-
             </View>
-
             <View className="layer-0 relative ">
               <TranscriptionLog2 />
               {openCapsule?.capsule.image_url && cameraActive && (
@@ -429,8 +416,6 @@ export default function Layout() {
                 />
               )}
             </View>
-
-
             {openCapsule && (
               <Link href={`/capsule/${openCapsule.capsule.id || ''}`} className="z-20">
                 <BlurView intensity={80} tint="light" className={`layer-2 flex flex-row items-start justify-between px-3 py-4 z-20`}>
@@ -455,10 +440,7 @@ export default function Layout() {
                   </View>
                 </BlurView>
               </Link>
-
             )}
-
-
           </View>
         </View>
         <BlurView
@@ -471,97 +453,7 @@ export default function Layout() {
         >
           <SafeAreaView className={`${Platform.OS === "android" ? "-mt-6" : "-mt-10"
             }`}>
-            {/* Scrollable Tabs */}
-            <View className="mb-5 h-12 justify-center mx-3">
-              <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                contentContainerStyle={{ alignItems: "center" }}
-              >
-                {tabScreens.map((tab) => {
-                  if (tab === "CREATED BY ME") {
-                    return (
-                      <Link
-                        key={tab}
-                        href="/my_profile"
-                        className="mx-3"
-                      >
-                        <Text className={`text-lg ${isDark ? "text-white" : "text-white"}`}>
-                          {tab}
-                        </Text>
-                      </Link>
-                    );
-                  }
-                  if (tab === "MY FEED") {
-                    return (
-                      <Link
-                        key={tab}
-                        href="/feed"
-                        className="mx-3"
-                      >
-                        <Text className={`text-lg ${isDark ? "text-white" : "text-white"}`}>
-                          {tab}
-                        </Text>
-                      </Link>
-                    );
-                  }
-                  if (tab === "EXPLORE") {
-                    return (
-                      <Link
-                        key={tab}
-                        href="/explore"
-                        className="mx-3"
-                      >
-                        <Text className={`text-lg ${isDark ? "text-white" : "text-white"}`}>
-                          {tab}
-                        </Text>
-                      </Link>
-                    );
-                  }
-                  if (tab === "SEARCH") {
-                    return (
-                      <Link
-                        key={tab}
-                        href="/search"
-                        className="mx-3"
-                      >
-                        <Text className={`text-lg ${isDark ? "text-white" : "text-white"}`}>
-                          {tab}
-                        </Text>
-                      </Link>
-                    );
-                  }
-                  if (tab === "I APPROVED") {
-                    return (
-                      <Link
-                        key={tab}
-                        href="/collectible"
-                        className="mx-3"
-                      >
-                        <Text className={`text-lg ${isDark ? "text-white" : "text-white"}`}>
-                          {tab}
-                        </Text>
-                      </Link>
-                    );
-                  }
-                  // CAMERA or other placeholders
-                  return (
-                    <TouchableOpacity key={tab} className="mx-3">
-                      <Text
-                        className={`text-lg ${tab === "CALL"
-                          ? "text-white font-bold"
-                          : isDark
-                            ? "text-white"
-                            : "text-white"
-                          }`}
-                      >
-                        {tab}
-                      </Text>
-                    </TouchableOpacity>
-                  );
-                })}
-              </ScrollView>
-            </View>
+            <ScrollableMenu />
             {/* <LookForButton
                 active={showPromptInput}
                 onPress={() => setShowPromptInput(!showPromptInput)}

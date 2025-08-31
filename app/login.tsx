@@ -9,7 +9,7 @@ import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/services/providers/AuthProvider';
 import { LanguageOption } from '@/types/types';
 import { uploadToBunny } from '@/utils/bunny/uploadToBunny';
-import { updateProfileAvatar, updateProfileLanguage } from '@/utils/supabase/crudProfile';
+import { updateProfileAppLanguage, updateProfileAvatar } from '@/utils/supabase/crudProfile';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from "expo-image-picker";
 import { useRouter } from 'expo-router';
@@ -35,8 +35,8 @@ export default function Login() {
   const [modalField, setModalField] = useState<'fullName' | 'handle' | 'intro' | 'avatar' | null>(null);
 
   useEffect(() => {
-    if (profile?.language) {
-      const selected = languages.find(lang => lang.gemini_code === profile.language);
+    if (profile?.app_language) {
+      const selected = languages.find(lang => lang.gemini_code === profile.app_language);
       if (selected) setLanguage(selected);
     }
     if (profile) {
@@ -50,7 +50,7 @@ export default function Login() {
   const handleLanguageChange = async (lang: LanguageOption) => {
     setLanguage(lang);
     if (!user) return;
-    const success = await updateProfileLanguage(user.id, lang.gemini_code);
+    const success = await updateProfileAppLanguage(user.id, lang.gemini_code);
     if (success) await refetchProfile();
   };
 
@@ -238,10 +238,10 @@ export default function Login() {
             <View className='flex flex-col w-full'>
               <View className='flex flex-row gap-2 mb-2 items-center'>
                 <Ionicons name="chatbubbles-outline" size={15} color={isDark ? "white" : "black"} />
-                <ThemedText>Language</ThemedText>
+                <ThemedText>App Language</ThemedText>
               </View>
               <Text className={isDark ? "text-white/60" : "text-black"}>
-                Your app localization and conversational agent language preference
+                Your preferred app language
               </Text>
             </View>
             <LanguageChooser selectedLanguage={language} onSelect={handleLanguageChange} />
@@ -300,7 +300,7 @@ export default function Login() {
         />
         {/* Intro Text */}
         <ThemedText className="text-center text-gray-700 mb-8 text-lg">
-          Welcome to Roar! Sign in with Google to start exploring.
+          Hey, {`I'm`} Roar! Sign in to start exploring.
         </ThemedText>
 
         {/* Google Sign-In */}

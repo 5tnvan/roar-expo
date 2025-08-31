@@ -34,11 +34,11 @@ export const useSearchCapsules = (query: string) => {
 
   useEffect(() => {
     const fetch = async () => {
-      if (!user?.id || !query) return;
+      if (!query) return;
       setIsLoading(true);
 
       try {
-        const pageCapsules = await searchCapsules(query, user.id, page, range);
+        const pageCapsules = await searchCapsules(query, user?.id || '', page, range);
         if (pageCapsules) {
           setCapsules(prev => [...prev, ...pageCapsules]);
         }

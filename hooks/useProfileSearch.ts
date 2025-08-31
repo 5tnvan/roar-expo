@@ -30,14 +30,14 @@ export const useSearchProfiles = (query: string) => {
 
   useEffect(() => {
     const fetch = async () => {
-      if (!user?.id || !query) {
+      if (!query) {
         setProfiles([]);
         return;
       }
 
       setIsLoading(true);
       try {
-        const results = await searchProfiles(query, user.id);
+        const results = await searchProfiles(query, user?.id || '');
         setProfiles(results.slice(0, 5)); // limit to 5 results
       } catch (err) {
         console.error("useSearchProfiles unexpected error:", err);

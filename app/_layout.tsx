@@ -93,6 +93,14 @@ const isAndroid = Platform.OS === "android";
                   headerBackTitle: "Back",      // text on back button
                   animation: isAndroid ? "none" : "default",
                 }} />
+                <Stack.Screen name="bot"
+                options={{
+                  presentation: 'card',
+                  headerShown: true,           // show header
+                  title: "Conversational Agent",
+                  headerBackTitle: "Back",      // text on back button
+                  animation: isAndroid ? "none" : "default",
+                }} />
               <Stack.Screen
                 name="profile/[profile]"
                 options={{
