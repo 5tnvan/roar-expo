@@ -1,17 +1,21 @@
-import CapsuleCard from "@/components/CapsuleCard";
-import { ProfileCard } from "@/components/ProfileCard";
-import { ThemedText } from "@/components/ThemedText";
+import CapsuleCard from "@/components/cards/CapsuleCard";
+import { ProfileCard } from "@/components/cards/ProfileCard";
+import { ThemedView } from "@/components/template/ThemedView";
 import { useSearchCapsules } from "@/hooks/useCapsulesSearch";
 import { useSearchProfiles } from "@/hooks/useProfileSearch";
+import { fetchPopularCapsuleTitles } from "@/utils/supabase/crudCapsule";
+import { Ionicons } from "@expo/vector-icons";
 
-import React, { useState } from "react";
-import { FlatList, TextInput, useColorScheme, View } from "react-native";
+import React, { useEffect, useState } from "react";
+import { FlatList, Keyboard, KeyboardAvoidingView, Platform, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, useColorScheme, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Search() {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
   const [query, setQuery] = useState("");
+  const [popularTitles, setPopularTitles] = useState<string[]>([]);
+  const [inputFocused, setInputFocused] = useState(false);
 
   const {
     profiles,
@@ -30,67 +34,107 @@ export default function Search() {
 
   const loading = loadingProfiles || loadingCapsules;
 
-  // Render Author section as the header of FlatList
+  const handleCallAssistant = (profile: any) => {
+    // handle AI assistant
+  };
+
+  // Fetch top popular titles once
+  useEffect(() => {
+    const loadPopular = async () => {
+      const popular = await fetchPopularCapsuleTitles(12);
+      console.log("Popular titles:", popular);
+      setPopularTitles(popular);
+    };
+    loadPopular();
+  }, []);
+
+  // Render Author section
   const renderHeader = () => (
-    <View className="mb-4">
-      {profiles.length > 0 && (
-        <>
-          <ThemedText className="text-lg font-semibold mb-2">Author</ThemedText>
-          {profiles.map((profile) => (
-            <ProfileCard
-              key={profile.id}
-              profile={profile}
-              onToggleSub={handleToggleSubProfile}
-              hideDetails
-            />
-          ))}
-        </>
-      )}
-
-      {loading && <ThemedText className="text-gray-500 mt-2">Loading...</ThemedText>}
-
-      {capsules.length > 0 && (
-        <ThemedText className="mt-4 mb-2 text-lg font-semibold">Messages</ThemedText>
-      )}
+    <View className="m-2 gap-2">
+      {profiles.length > 0 && profiles.map((profile) => (
+        <ProfileCard
+          key={profile.id}
+          profile={profile}
+          onToggleSub={handleToggleSubProfile}
+          hideDetails
+          onCallAssistantWithAI={handleCallAssistant}
+        />
+      ))}
     </View>
   );
 
   return (
-    <SafeAreaView edges={['right', 'bottom', 'left']} className="flex-1 bg-gray-200 dark:bg-gray-900 p-2">
-      <TextInput
-        placeholder="Searching for..."
-        placeholderTextColor={isDark ? "#aaa" : "#555"}
-        className={`border border-gray-300 rounded-lg px-3 py-2 mt-2 ${
-          isDark ? "bg-black text-white" : "bg-white text-black"
-        }`}
-        value={query.toLocaleLowerCase()}
-        style={{ fontSize: 24, padding: 10 }}
-        onChangeText={(text) => {
-          setQuery(text);
-          refetchProfiles();
-          refetchCapsules();
-        }}
-      />
-
-      <FlatList
-        data={capsules}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <View className="mt-1">
-            <CapsuleCard
-              capsule={item}
-              onReadWithAI={() => console.log("hey")}
-              onToggleSub={handleToggleSubCapsule}
+    <SafeAreaView edges={['right', 'bottom', 'left']} className="flex-1 bg-zinc-60 dark:black">
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 0}
+      >
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <View className="flex-1">
+            
+            {/* Show popular titles only when input is focused */}
+            {inputFocused && !capsules?.length && !profiles?.length && popularTitles.length > 0 && (
+              <ThemedView className="flex-col">
+                {popularTitles.map((title) => {
+                  const match = title.match(/.*?[.?!]/);
+                  const firstSentence = match ? match[0].trim() : title.trim();
+                  return (
+                    <TouchableOpacity key={title} onPress={() => setQuery(firstSentence)}>
+                      <View className="flex-row items-center py-4 px-2 border-b border-gray-300 dark:border-zinc-700">
+                        <Ionicons name="search-outline" size={20} color={isDark ? "grey" : "grey"} className="mr-4" />
+                        <Text className={`text-xl ${isDark ? "text-white/50" : "text-black/50"}`}>
+                          {firstSentence}
+                        </Text>
+                      </View>
+                    </TouchableOpacity>
+                  );
+                })}
+              </ThemedView>
+            )}
+            {/* Search res */}
+            <FlatList
+              className="flex-1"
+              data={capsules}
+              keyExtractor={(item, index) => `${item.id}-${index}`}
+              renderItem={({ item }) => (
+                <CapsuleCard
+                  capsule={item}
+                  onReadWithAI={() => console.log("hey")}
+                  onToggleSub={handleToggleSubCapsule}
+                />
+              )}
+              ListHeaderComponent={renderHeader}
+              onEndReached={fetchMoreCapsules}
+              onEndReachedThreshold={0.5}
+              refreshing={loadingCapsules}
+              onRefresh={refetchCapsules}
             />
+
+            {/* Search input */}
+            <View className="flex flex-row items-center border-t border-gray-300 dark:border-zinc-700">
+              <Ionicons name="search-sharp" size={24} color={isDark ? "grey" : "grey"} className="ml-4" />
+              <TextInput
+                placeholder="Search Roar"
+                placeholderTextColor={isDark ? "#aaa" : "#555"}
+                className={`flex-1 rounded-lg px-2 py-5 ${isDark ? "text-white" : "text-black"}`}
+                value={query}
+                style={{ fontSize: 18 }}
+                onChangeText={(text) => {
+                  setQuery(text);
+                  refetchProfiles();
+                  refetchCapsules();
+                }}
+                onFocus={() => setInputFocused(true)}
+                onBlur={() => setInputFocused(false)}
+                autoFocus
+                returnKeyType="search"
+                onSubmitEditing={Keyboard.dismiss}
+              />
+            </View>
           </View>
-        )}
-        ListHeaderComponent={renderHeader}
-        onEndReached={fetchMoreCapsules}
-        onEndReachedThreshold={0.5}
-        refreshing={loadingCapsules}
-        onRefresh={refetchCapsules}
-        className="flex-1"
-      />
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }

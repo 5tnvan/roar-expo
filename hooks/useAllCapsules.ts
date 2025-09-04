@@ -1,6 +1,6 @@
 import { useAuth } from "@/services/providers/AuthProvider";
 import { Capsule } from "@/types/types";
-import { fetchAllCapsules } from "@/utils/supabase/fetchCapsule";
+import { fetchAllCapsules } from "@/utils/supabase/crudCapsule";
 import { useEffect, useState } from "react";
 
 export const useAllCapsules = () => {

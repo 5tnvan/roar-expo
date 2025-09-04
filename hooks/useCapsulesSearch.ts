@@ -1,6 +1,6 @@
 import { useAuth } from "@/services/providers/AuthProvider";
 import { Capsule } from "@/types/types";
-import { searchCapsules } from "@/utils/supabase/fetchCapsule";
+import { searchCapsules } from "@/utils/supabase/crudCapsule";
 import { useEffect, useState } from "react";
 
 export const useSearchCapsules = (query: string) => {

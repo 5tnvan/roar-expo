@@ -1,6 +1,6 @@
 import { useAuth } from "@/services/providers/AuthProvider";
 import { Capsule } from "@/types/types";
-import { fetchLikedCapsules } from "@/utils/supabase/fetchCapsule"; // <-- new util
+import { fetchLikedCapsules } from "@/utils/supabase/crudCapsule"; // <-- new util
 import { useEffect, useState } from "react";
 
 export const useLikedCapsules = () => {
@@ -9,12 +9,14 @@ export const useLikedCapsules = () => {
   const [capsules, setCapsules] = useState<Capsule[]>([]);
   const [page, setPage] = useState(0);
   const [triggerRefetch, setTriggerRefetch] = useState(false);
+  const [endReached, setEndReached] = useState(false);
 
   const range = 5; // capsules per page
 
   const refetch = () => {
     setPage(0);
     setCapsules([]);
+    setEndReached(false); // reset
     setTriggerRefetch(prev => !prev);
   };
 
@@ -40,6 +42,9 @@ export const useLikedCapsules = () => {
     try {
       const pageCapsules = await fetchLikedCapsules(user.id, page, range);
       if (!pageCapsules) return;
+
+      // If fetched less than requested, mark end reached
+      if (pageCapsules.length < range) setEndReached(true);
       
       // Merge new capsules with existing ones,
       // keeping any local subscription state
@@ -64,5 +69,5 @@ export const useLikedCapsules = () => {
     fetchCapsules();
   }, [page, triggerRefetch, user?.id]);
 
-  return { isLoading, capsules, handleToggleSub, fetchMore, refetch };
+  return { isLoading, capsules, handleToggleSub, fetchMore, refetch, endReached };
 };

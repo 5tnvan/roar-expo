@@ -1,6 +1,6 @@
 import AuthGoogle from '@/components/auth/AuthGoogle';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+import { ThemedText } from '@/components/template/ThemedText';
+import { ThemedView } from '@/components/template/ThemedView';
 import { useAuth } from '@/services/providers/AuthProvider';
 import React from 'react';
 import { Image, Modal, TouchableOpacity, useColorScheme, View } from "react-native";
@@ -10,7 +10,7 @@ interface LoginModalProps {
   onClose: () => void;
 }
 
-export default function LoginModal({ visible, onClose }: LoginModalProps) {
+export default function Login({ visible, onClose }: LoginModalProps) {
   const { isAuthenticated } = useAuth();
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
@@ -33,7 +33,7 @@ export default function LoginModal({ visible, onClose }: LoginModalProps) {
           </TouchableOpacity>
         </ThemedView>
 
-        <View className="bg-gray-200 dark:bg-gray-900 flex-1 justify-center items-center p-6">
+        <View className="bg-zinc-200 dark:bg-zinc-900 flex-1 justify-center items-center p-6">
           {/* Logo */}
           <Image
             source={require('../assets/images/icon-ios.png')}

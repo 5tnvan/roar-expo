@@ -64,7 +64,20 @@ async function getNotificationDetails(notif: Notification) {
       message = `@${handle} called your assistant`
       break
     case 'notif_call_msg': {
-      const seconds = notif.capsule_calls ?? 0
+      let seconds = 0
+      if (notif.capsule_id) {
+        const { data: callRow, error } = await supabase
+          .from('capsule_call')
+          .select('duration')
+          .eq('capsule_id', notif.capsule_id)
+          .order('created_at', { ascending: false })
+          .limit(1)
+          .single()
+
+        if (!error && callRow) {
+          seconds = callRow.duration ?? 60
+        }
+      }
       message = `A caller spent ${formatMinutes(seconds)} exploring your message`
       break
     }

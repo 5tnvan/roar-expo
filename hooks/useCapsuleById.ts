@@ -1,7 +1,7 @@
 import { useAuth } from "@/services/providers/AuthProvider";
 import { Capsule } from "@/types/types";
+import { fetchCapsuleById } from "@/utils/supabase/crudCapsule";
 import { deleteSub, insertSub } from "@/utils/supabase/crudSub";
-import { fetchCapsuleById } from "@/utils/supabase/fetchCapsule";
 import { useEffect, useState } from "react";
 
 export const useCapsuleById = (capsule_id: string) => {

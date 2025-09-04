@@ -1,13 +1,13 @@
 import React, { useEffect, useRef } from "react";
 import {
-    ActivityIndicator,
-    Animated,
-    KeyboardAvoidingView,
-    Platform,
-    Pressable,
-    Text,
-    TextInput,
-    View,
+  ActivityIndicator,
+  Animated,
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  Text,
+  TextInput,
+  View,
 } from "react-native";
 
 type PromptInputProps = {
@@ -49,7 +49,7 @@ export default function PromptInput({
             value={textPromptInput}
             onChangeText={setTextPromptInput}
             placeholder="I'm looking for..."
-            className="flex-1 p-4 bg-gray-100 text-black rounded-md"
+            className="flex-1 p-4 bg-zinc-100 text-black rounded-md"
             placeholderTextColor="#9ca3af"
           />
           <Pressable

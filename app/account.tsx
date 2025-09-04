@@ -1,6 +1,6 @@
-import { ProfileCard } from '@/components/ProfileCard';
-import { ThemedText } from '@/components/ThemedText';
-import AppButton from '@/components/ui/Button';
+import AppButton from '@/components/buttons/AppButton';
+import { ProfileCard } from '@/components/cards/ProfileCard';
+import { ThemedText } from '@/components/template/ThemedText';
 import { LanguageChooser } from '@/components/ui/LangChooser';
 import { languages } from '@/constants/Languages';
 import { useProfileByUserId } from '@/hooks/useProfileByUserId';
@@ -190,7 +190,7 @@ export default function Account() {
           gap: 12,                  // gap-4 (16px)
           padding: 12,              // p-4
         }}>
-          {profile && user?.id && <ProfileCard profile={profileById || profile} onToggleSub={handleToggleSub} />}
+          {profile && user?.id && <ProfileCard profile={profileById || profile} onToggleSub={handleToggleSub} onCallAssistantWithAI={() => Alert.alert("Can't call yourself.")} />}
 
           <ThemedText className='font-bold'>Profile</ThemedText>
           <View className="flex flex-col w-full gap-4">
@@ -240,11 +240,11 @@ export default function Account() {
           <View className='lang w-full gap-3'>
             <View className='flex flex-col w-full'>
               <View className='flex flex-row gap-2 mb-2 items-center'>
-                <Ionicons name="chatbubbles-outline" size={15} color={isDark ? "white" : "black"} />
+                <Ionicons name="language-outline" size={15} color={isDark ? "white" : "black"} />
                 <ThemedText>App Language</ThemedText>
               </View>
               <Text className={isDark ? "text-white/60" : "text-black"}>
-                Your preferred app language
+                Your app will be localized to this language.
               </Text>
             </View>
             <LanguageChooser selectedLanguage={language} onSelect={handleLanguageChange} />
@@ -265,7 +265,7 @@ export default function Account() {
             onRequestClose={() => setModalVisible(false)}
           >
             <View className="flex-1 justify-center items-center bg-black/50 p-4">
-              <View className="bg-white dark:bg-gray-800 rounded-lg w-full p-4 gap-2">
+              <View className="bg-white dark:bg-zinc-800 rounded-lg w-full p-4 gap-2">
                 {modalField === 'avatar' ? (
                   <AppButton title="Pick Image" variant="primary" onPress={pickAvatar} />
                 ) : (

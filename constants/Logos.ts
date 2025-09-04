@@ -1,0 +1,1 @@
+export const fallbackLogo = require("../assets/logo/roar-qr-3.png");

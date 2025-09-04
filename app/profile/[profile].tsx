@@ -1,39 +1,42 @@
 
-import CapsuleCard from "@/components/CapsuleCard";
-import { usePipecat } from "@/components/pipecat/PipeCat";
-import { ProfileCard } from "@/components/ProfileCard";
+import CapsuleCard from "@/components/cards/CapsuleCard";
+import { ProfileCard } from "@/components/cards/ProfileCard";
+import { usePipecat } from "@/components/providers/PipeCatProvider";
+import { ThemedText } from "@/components/template/ThemedText";
+import BottomMenu from "@/components/ui/BottomMenu";
 import { useCapsulesByOwner } from "@/hooks/useCapsulesByOwner";
 import { useProfileByUserId } from "@/hooks/useProfileByUserId";
 import { Capsule } from "@/types/types";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { useLocalSearchParams, useNavigation } from "expo-router";
-import { ActivityIndicator, FlatList, Text, View } from "react-native";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import { ActivityIndicator, FlatList, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-type RootStackParamList = {
-  "(tabs)": undefined; // your tabs screen
-  "OtherScreen": undefined; // other screens
-};
 
 export default function Profile() {
   const { profile: profile_id } = useLocalSearchParams();
   const { isLoading: loadingProfile, profile, handleToggleSub: handleToggleSubProfile  } = useProfileByUserId(profile_id as string);
   const { isLoading: loadingCapsules, capsules, handleToggleSub: handleToggleCapsule, fetchMore, } = useCapsulesByOwner(profile_id as string);
-  const { sendCapsule } = usePipecat();
-  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const { sendCapsule, sendConvoSession } = usePipecat();
+  const router = useRouter();
+
+  const handleCallAssistant = (profile: any, convo_session_id: string) => {
+      sendConvoSession(profile, convo_session_id);
+      router.push("(tabs)");
+  }
+
 
   const handleReadWithAI = (capsule: Capsule) => {
       sendCapsule(capsule);
-      navigation.navigate("(tabs)");
+      router.push("(tabs)");
     };
 
   return (
-    <SafeAreaView edges={['right', 'bottom', 'left']} className="flex-1">
-      {profile && <View className="m-2"><ProfileCard profile={profile} onToggleSub={handleToggleSubProfile} /></View>}
+    <SafeAreaView edges={['right', 'bottom', 'left']} className={`flex-1 bg-white dark:bg-dark`}>
+      {profile && <View className="m-2"><ProfileCard profile={profile} onToggleSub={handleToggleSubProfile} onCallAssistantWithAI={handleCallAssistant} /></View>}
       
       {capsules && capsules.length > 0 ? (
         <FlatList
           data={capsules}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item, index) => `${item.id}-${index}`}
           renderItem={({ item }) => <CapsuleCard capsule={item} onReadWithAI={handleReadWithAI} onToggleSub={handleToggleCapsule} hideDetails />}
           onEndReached={fetchMore}
           onEndReachedThreshold={0.5}
@@ -44,8 +47,9 @@ export default function Profile() {
           }
         />
       ) : (
-        <Text className="text-center mt-4">No messages yet.</Text>
+        <ThemedText className="text-center mt-4">No messages yet.</ThemedText>
       )}
+      <BottomMenu />
     </SafeAreaView>
   );
 }

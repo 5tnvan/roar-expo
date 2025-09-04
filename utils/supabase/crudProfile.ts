@@ -76,6 +76,7 @@ export const fetchProfile = async (
     subCount: data.subCount?.[0]?.count || 0,
     isSub: data.isSub?.some((s: any) => s.subscriber_id === user_id) || false,
     capsuleCount: data.capsuleCount?.[0]?.count || 0,
+    gemini_api_key: data.gemini_api_key,
   };
 
   return profile;
@@ -182,6 +183,20 @@ export const updateProfileBotLanguage = async (userId: string, langCode: string)
   const { error } = await supabase
     .from("profile")
     .update({ bot_language: langCode })
+    .eq("id", userId);
+
+  if (error) {
+    console.error("Failed to update language:", error.message);
+    return false;
+  }
+
+  return true;
+};
+
+export const updateProfileGeminiKey = async (userId: string, gemini_api_key: string): Promise<boolean> => {
+  const { error } = await supabase
+    .from("profile")
+    .update({ gemini_api_key })
     .eq("id", userId);
 
   if (error) {

@@ -1,23 +1,29 @@
-import CapsuleCard from '@/components/CapsuleCard';
-import { usePipecat } from '@/components/pipecat/PipeCat';
-import { ThemedText } from '@/components/ThemedText';
-import AppButton from '@/components/ui/Button';
-import { useAllCapsules } from '@/hooks/useAllCapsules';
+import CapsuleCard from '@/components/cards/CapsuleCard';
+import { usePipecat } from '@/components/providers/PipeCatProvider';
+import { ThemedText } from '@/components/template/ThemedText';
+import { ThemedView } from '@/components/template/ThemedView';
+import BottomMenu from '@/components/ui/BottomMenu';
+import { useExploreCapsules } from '@/hooks/useExploreCapsules';
 import { Capsule } from '@/types/types';
-import { Link, useNavigation } from 'expo-router';
-import {
-  ActivityIndicator,
-  FlatList,
-  useColorScheme,
-  View
-} from 'react-native';
+import { useNavigation } from 'expo-router';
+import { ActivityIndicator, FlatList, TouchableOpacity, useColorScheme } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Explore() {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
-  //context
-  const { isLoading, capsules, fetchMore, handleToggleSub } = useAllCapsules();
+
+  const {
+    activeTab,
+    setActiveTab,
+    capsules,
+    fetchMore,
+    refetch,
+    handleToggleSub,
+    endReached,
+    isLoading
+  } = useExploreCapsules();
+
   const navigation = useNavigation();
   const { sendCapsule } = usePipecat();
 
@@ -26,50 +32,79 @@ export default function Explore() {
     navigation.goBack();
   };
 
+  const handleRefresh = async () => {
+    refetch();
+  };
+
+  const handleLoadMore = async () => {
+    if (!endReached && !isLoading) {
+      fetchMore();
+    }
+  };
+
+  const tabs: { label: string; value: 'similar' | 'new' | 'popular' }[] = [
+    { label: 'Similar', value: 'similar' },
+    { label: 'New', value: 'new' },
+    { label: 'Popular', value: 'popular' }
+  ];
+
   return (
-    <SafeAreaView
-      edges={['right', 'bottom', 'left']}
-      className={`flex-1 ${isDark ? "bg-zinc-950" : "bg-slate-300"}`}
-    >
+    <SafeAreaView edges={['right','bottom','left']} className={`flex-1 ${isDark ? "bg-black" : "bg-white"}`}>
+      {/* Tabs */}
+      <ThemedView className="flex-row justify-around border-b border-gray-400/20">
+        {tabs.map(tab => (
+          <TouchableOpacity
+            key={tab.value}
+            onPress={() => setActiveTab(tab.value)}
+            className={`py-3 ${activeTab === tab.value ? "border-b-2 border-blue-500" : ""}`}
+          >
+            <ThemedText className={`${activeTab === tab.value ? "text-blue-500 font-bold" : "text-gray-500"}`}>
+              {tab.label}
+            </ThemedText>
+          </TouchableOpacity>
+        ))}
+      </ThemedView>
+
+      {/* Loading */}
       {isLoading && capsules.length === 0 && (
         <ActivityIndicator size="large" className="mt-5" />
       )}
 
+      {/* Empty state */}
       {!isLoading && capsules.length === 0 && (
-        <>
-          <ThemedText className="mt-5 text-gray-500 text-center">
-            There are no messages.
-          </ThemedText>
-          <View className="w-full items-center my-4">
-            <Link href="/explore" asChild>
-              <AppButton
-                title="Reload"
-                variant="primary"
-                onPress={() => console.log("Pressed!")}
-              />
-            </Link>
-          </View>
-        </>
+        <ThemedText className="mt-5 text-gray-500 text-center">
+          No messages in this tab.
+        </ThemedText>
       )}
-      <FlatList
-        data={capsules}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <CapsuleCard
-            capsule={item}
-            onReadWithAI={handleReadWithAI}
-            onToggleSub={handleToggleSub}
-          />
-        )}
-        onEndReached={fetchMore}
-        onEndReachedThreshold={0.5}
-        ListFooterComponent={
-          isLoading && capsules.length > 0 ? (
-            <ActivityIndicator size="small" className="my-4" />
-          ) : null
-        }
-      />
+
+      {/* Capsule list */}
+      {capsules.length > 0 && (
+        <FlatList
+          data={capsules}
+          keyExtractor={(item,index) => `${item.id}-${index}`}
+          renderItem={({ item }) => (
+            <CapsuleCard
+              capsule={item}
+              onReadWithAI={handleReadWithAI}
+              onToggleSub={handleToggleSub}
+            />
+          )}
+          className='py-2'
+          refreshing={isLoading}
+          onRefresh={handleRefresh}
+          onEndReached={handleLoadMore}
+          onEndReachedThreshold={0.5}
+          ListFooterComponent={
+            isLoading ? (
+              <ActivityIndicator size="small" className="my-4" />
+            ) : endReached ? (
+              <ThemedText className="text-center my-4 text-gray-400">
+                You reached the end.
+              </ThemedText>
+            ) : null
+          }
+        />
+      )}<BottomMenu />
     </SafeAreaView>
   );
 }
-

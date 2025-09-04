@@ -19,7 +19,7 @@
     "@pipecat-ai/react-native-daily-transport": "^1.2.0",
     "@react-native-async-storage/async-storage": "^1.24.0",
     "@react-native-google-signin/google-signin": "^15.0.0",
-    "@react-navigation/bottom-tabs": "^7.3.10",
+    "@react-navigation/bottom-tabs": "^7.4.7",
     "@react-navigation/elements": "^2.3.8",
     "@react-navigation/native": "^7.1.6",
     "@supabase/supabase-js": "^2.55.0",

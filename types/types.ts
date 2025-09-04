@@ -25,6 +25,7 @@ export type Profile = {
   subCount?: number;
   isSub?: boolean;
   capsuleCount?: number;
+  gemini_api_key?: string;
 };
 
 export type CapsuleStats = {
@@ -71,3 +72,27 @@ export type TranscriptionEntry = {
     text: string;
     timestamp: string;
 }
+
+export type Convo = {
+  id: string;
+  user: Profile;
+  caller: Profile;
+  created_at: string;
+};
+
+export type ConvoSession = {
+  id: string;
+  convo_id: string;
+  caller: Profile;
+  callee: Profile;
+  reply: ConvoSessionReply[];
+  created_at: string;
+  duration?: number;
+  transcript?: TranscriptionEntry[]; // JSONB
+};
+
+export type ConvoSessionReply = {
+  id: string;
+  created_at: string;
+  content: string;
+};

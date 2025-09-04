@@ -4,7 +4,7 @@ import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useRef } from 'react';
 import { Animated, Pressable, useColorScheme, View } from 'react-native';
-import { ThemedText } from '../ThemedText';
+import { ThemedText } from '../template/ThemedText';
 
 export default function AuthGoogle() {
   const colorScheme = useColorScheme();
@@ -56,7 +56,7 @@ export default function AuthGoogle() {
           onPress={handleGoogleSignIn}
           onPressIn={handlePressIn}
           onPressOut={handlePressOut}
-          className={`flex-row items-center justify-center gap-2 px-6 py-3 rounded-3xl ${isDark ? "bg-gray-800" : "bg-gray-50"}`}
+          className={`flex-row items-center justify-center gap-2 px-6 py-3 rounded-3xl ${isDark ? "bg-zinc-800" : "bg-zinc-50"}`}
         >
           <Ionicons name="logo-google" size={20} color={isDark ? "white" : "dark"} />
           <ThemedText className="font-medium text-white text-lg">Sign in with Google</ThemedText>
