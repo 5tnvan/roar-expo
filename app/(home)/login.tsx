@@ -36,7 +36,7 @@ export default function Login({ visible, onClose }: LoginModalProps) {
         <View className="bg-zinc-200 dark:bg-zinc-900 flex-1 justify-center items-center p-6">
           {/* Logo */}
           <Image
-            source={require('../assets/images/icon-ios.png')}
+            source={require('../../assets/images/icon-ios.png')}
             className="w-24 h-24 mb-6 rounded-lg"
             resizeMode="contain"
           />

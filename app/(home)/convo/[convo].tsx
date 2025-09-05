@@ -2,7 +2,6 @@ import { Avatar } from "@/components/avatars/Avatar";
 import BackgroundNoAnim from "@/components/bg/BackgroundNoAnim";
 import AppButton from "@/components/buttons/AppButton";
 import AssistantButton from "@/components/buttons/AssistantButton";
-import DoubleTickIcon from "@/components/DoubleTickIcon";
 import { usePipecat } from "@/components/providers/PipeCatProvider";
 import { ThemedText } from "@/components/template/ThemedText";
 import { ThemedView } from "@/components/template/ThemedView";
@@ -27,7 +26,7 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   useColorScheme,
-  View,
+  View
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -58,13 +57,12 @@ export default function Convo() {
     );
 
   const handleGoBack = () => {
-    router.push("(tabs)");
+    router.push("/");
   };
 
-  const handleCallAssistant = (callee_profile: any, convo_session_id: string) => {
-
-    sendConvoSession(callee_profile, convo_session_id);
-    router.replace("(tabs)");
+  const handleCallAssistant = (callee_profile: any, convo_session_id: string, convo_session_reply_id: string,) => {
+    sendConvoSession(callee_profile, convo_session_id, convo_session_reply_id);
+    router.replace("/");
   }
 
   const handleSendReply = async () => {
@@ -102,18 +100,7 @@ export default function Convo() {
   const caller = convos[0].caller;
 
   return (
-    <SafeAreaView className="flex-1 bg-white dark:bg-black">
-
-      {/* Header */}
-      <ThemedView className="flex-row justify-between items-center p-3 border-b border-gray-500/20">
-        <View className="flex flex-row gap-1 justify-center items-center">
-          <Avatar uri={caller.avatar_url} size={30} borderColor="green" />
-          <ThemedText className="text-white text-lg font-normal">@{caller.handle}</ThemedText>
-        </View>
-        <TouchableOpacity onPress={handleGoBack} className="p-2">
-          <ThemedText className="text-blue-400">Close</ThemedText>
-        </TouchableOpacity>
-      </ThemedView>
+    <SafeAreaView edges={['bottom']} className="flex-1 bg-white dark:bg-black">
       <BackgroundNoAnim>
 
         {/* FlatList messages */}
@@ -131,7 +118,7 @@ export default function Convo() {
 
             return (
               <View
-                className={`px-2 mb-1 ${shouldHighlight ? "mx-2 border-l-4 border-green-500 bg-zinc-200/5- dark:bg-zinc-800/50" : ""
+                className={`px-2 mb-1 ${shouldHighlight ? "mx-2 border-l-4 border-blue-500" : ""
                   }`}
               >
                 <View className="border-t border-gray-800 dark:border-gray-500/50 w-1/2 items-center mx-auto mt-2"></View>
@@ -160,7 +147,7 @@ export default function Convo() {
                           <Avatar uri={item.callee?.avatar_url} size={40} />
                           <View className="flex flex-col items-start">
                             <Text className="text-md black dark:white font-semibold text-gray-800 dark:text-gray-200">
-                              {user?.id === callee.id ? "Yay, you replied!" : "Yay, you've got a reply!"}
+                              {user?.id === callee.id ? "Yay, you replied!" : "Yay, you've got a message!"}
 
                             </Text>
                             <View className="flex flex-row items-center gap-1">
@@ -177,18 +164,19 @@ export default function Convo() {
 
                         {/* Reply content */}
                         {user?.id === callee.id ? <Text className="text-gray-700 dark:text-gray-300 my-3">{rep.content}</Text> : ""}
+                        {user?.id === callee.id ? <Text className="text-gray-700 dark:text-gray-300 my-3">{rep.id}</Text> : ""}
 
 
                         {/* Button */}
                         <View className="self-end">
                           <View className="flex flex-row">
-                            {user?.id === callee.id ? <DoubleTickIcon /> : <AppButton
+                            {user?.id === callee.id ? "" : <AppButton
                               title="Call to open"
                               size="sm"
                               variant="primary"
                               icon="call-outline"
                               iconSize={13}
-                              onPress={() => handleCallAssistant(callee, item.convo_id)}
+                              onPress={() => handleCallAssistant(callee, item.id, rep.id)}
                             />}
                           </View>
                         </View>
@@ -214,9 +202,9 @@ export default function Convo() {
         {user?.id === caller.id && (
           <ThemedView className="pt-2 px-2 w-full">
             <AssistantButton
-              label={`Talk to @${callee.handle} assistant`}
+              label={`@${callee.handle}`}
               size={50}
-              onPress={() => handleCallAssistant(callee, convos[0].convo_id)}
+              onPress={() => handleCallAssistant(callee, convos[0].id, '')}
             />
           </ThemedView>
 
@@ -227,7 +215,7 @@ export default function Convo() {
       {user?.id === callee.id && (
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : undefined}
-          keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
+          keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 0}
         >
           <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
 

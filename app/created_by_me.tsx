@@ -2,13 +2,13 @@ import AppButton from '@/components/buttons/AppButton';
 import CapsuleCard from '@/components/cards/CapsuleCard';
 import { usePipecat } from '@/components/providers/PipeCatProvider';
 import { ThemedText } from '@/components/template/ThemedText';
-import BottomMenu from '@/components/ui/BottomMenu';
 import { useCapsulesByOwner } from '@/hooks/useCapsulesByOwner';
 import { useAuth } from '@/services/providers/AuthProvider';
 import { Capsule } from '@/types/types';
 import { Link, useRouter } from 'expo-router';
 import {
   ActivityIndicator,
+  Alert,
   FlatList,
   useColorScheme,
   View
@@ -21,19 +21,36 @@ export default function CreatedByMe() {
   //context
   const { user } = useAuth();
   const router = useRouter();
-  const { isLoading, capsules, handleToggleSub, fetchMore } = useCapsulesByOwner(user?.id || '');
-  const { sendCapsule } = usePipecat();
+  const { isLoading, capsules, handleToggleSub, fetchMore, refetch, endReached } = useCapsulesByOwner(user?.id || '');
+  const { inCall, sendCapsule } = usePipecat();
 
 
   const handleReadWithAI = (capsule: Capsule) => {
-    sendCapsule(capsule);
-    router.push("(tabs)");
+    if (inCall) {
+      Alert.alert(
+        "Already in call",
+        "Please hang up first.",
+        [
+          {
+            text: "Cancel",
+            style: "cancel"
+          },
+          {
+            text: "Go to Call",
+            onPress: () => router.push("/"), // replace with your screen name
+          }
+        ],
+        { cancelable: true })
+    } else {
+      sendCapsule(capsule);
+      router.push("/");
+    }
   };
 
   return (
     <SafeAreaView
-      edges={['right', 'bottom', 'left']}
-      className={`flex-1 ${isDark ? "bg-black" : "bg-white"}`}
+      edges={['right', 'left']}
+      className={`py-2 flex-1 ${isDark ? "bg-black" : "bg-zinc-100"}`}
     >
       {isLoading && capsules.length === 0 && (
         <ActivityIndicator size="large" className="mt-5" />
@@ -55,24 +72,38 @@ export default function CreatedByMe() {
           </View>
         </>
       )}
-      <FlatList
-        data={capsules}
-        keyExtractor={(item, index) => `${item.id}-${index}`}
-        renderItem={({ item }) => (
-          <CapsuleCard
-            capsule={item}
-            onReadWithAI={handleReadWithAI}
-            onToggleSub={handleToggleSub}
-          />
-        )}
-        onEndReached={fetchMore}
-        onEndReachedThreshold={0.5}
-        ListFooterComponent={
-          isLoading && capsules.length > 0 ? (
-            <ActivityIndicator size="small" className="my-4" />
-          ) : null
-        }
-      /><BottomMenu />
+      {capsules.length > 0 && (
+        <FlatList
+          data={capsules}
+          keyExtractor={(item, index) => `${item.id}-${index}`}
+          renderItem={({ item }) => (
+            <CapsuleCard
+              capsule={item}
+              onReadWithAI={handleReadWithAI}
+              onToggleSub={handleToggleSub}
+            />
+          )}
+          // Infinite scroll
+          onEndReached={fetchMore}
+          onEndReachedThreshold={0.5}
+          // Pull-to-refresh
+          refreshing={isLoading && capsules.length === 0} // show spinner if initially loading
+          onRefresh={refetch} // called when user swipes down
+          ListFooterComponent={() => {
+            if (isLoading && capsules.length > 0) {
+              return <ActivityIndicator size="small" className="my-4" />;
+            } else if (!isLoading && endReached) {
+              return (
+                <ThemedText className="text-center text-gray-500 my-4 opacity-80">
+                  You’ve reached the end
+                </ThemedText>
+              );
+            } else {
+              return null;
+            }
+          }}
+        />
+      )}
     </SafeAreaView>
   );
 }

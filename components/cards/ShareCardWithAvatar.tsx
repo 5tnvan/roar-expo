@@ -51,7 +51,7 @@ export default function ShareCardWithAvatar({ capsule }: ShareCardWithAvatarProp
         {/* Avatar + Handle */}
         <View className="flex-row items-center justify-between gap-3 mb-3">
           <View className="flex flex-row items-center gap-2">
-            <Avatar uri={capsule.owner.avatar_url} size={40} showTick />
+            <Avatar uri={capsule.owner.avatar_url || capsule.image_url} size={40} showTick />
             <Text className={`font-semibold text-lg ${isDark ? "text-white" : "text-black"}`}>
               {capsule.owner.handle}
             </Text>
@@ -60,7 +60,7 @@ export default function ShareCardWithAvatar({ capsule }: ShareCardWithAvatarProp
               <ThemedText className="opacity-80">{readMinutes} min</ThemedText>
             </View>
           </View>
-          <AssistantButton label="Call Roar" onPress={() => { }} />
+          <AssistantButton label="ROAR" onPress={() => { }} />
         </View>
 
         {/* Capsule Title */}

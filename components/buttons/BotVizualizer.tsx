@@ -41,7 +41,7 @@ export default function BotVisualizer({ size = 40, logoSize = 35 }: BotVisualize
   const blobColor = colorScheme === "dark" ? "#ffffff" : inCall ? "#ffffff" : "#e0e0e0";
 
   return (
-    <Link href="./bot">
+    <Link href="/bot">
     <Animated.View
       style={{
         width: size,

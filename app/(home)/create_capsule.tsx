@@ -1,3 +1,5 @@
+import PdfViewerModal from "@/app/(home)/modals/pdf_viewer";
+import PreviewModal from "@/app/(home)/modals/preview";
 import AppButton from "@/components/buttons/AppButton";
 import { dancingPills } from "@/constants/DancingPills";
 import { inspirations } from "@/constants/Inspo";
@@ -18,6 +20,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   Pressable,
+  SafeAreaView,
   ScrollView,
   Text,
   TextInput,
@@ -26,9 +29,6 @@ import {
   useColorScheme,
   View
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import PdfViewerModal from "./modals/pdf_viewer";
-import PreviewModal from "./modals/preview";
 
 type pdfFile = {
   name: string;

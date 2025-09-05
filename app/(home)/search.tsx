@@ -1,13 +1,13 @@
-import CapsuleCard from "@/components/cards/CapsuleCard";
-import { ProfileCard } from "@/components/cards/ProfileCard";
-import { ThemedView } from "@/components/template/ThemedView";
-import { useSearchCapsules } from "@/hooks/useCapsulesSearch";
-import { useSearchProfiles } from "@/hooks/useProfileSearch";
-import { fetchPopularCapsuleTitles } from "@/utils/supabase/crudCapsule";
 import { Ionicons } from "@expo/vector-icons";
+import CapsuleCard from "../../components/cards/CapsuleCard";
+import { ProfileCard } from "../../components/cards/ProfileCard";
+import { ThemedView } from "../../components/template/ThemedView";
+import { useSearchCapsules } from "../../hooks/useCapsulesSearch";
+import { useSearchProfiles } from "../../hooks/useProfileSearch";
+import { fetchPopularCapsuleTitles } from "../../utils/supabase/crudCapsule";
 
-import React, { useEffect, useState } from "react";
-import { FlatList, Keyboard, KeyboardAvoidingView, Platform, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, useColorScheme, View } from "react-native";
+import { useEffect, useState } from "react";
+import { FlatList, Keyboard, KeyboardAvoidingView, Platform, ScrollView, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, useColorScheme, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Search() {
@@ -72,26 +72,43 @@ export default function Search() {
       >
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <View className="flex-1">
-            
+
             {/* Show popular titles only when input is focused */}
             {inputFocused && !capsules?.length && !profiles?.length && popularTitles.length > 0 && (
-              <ThemedView className="flex-col">
+              <ThemedView className="">
+                <ScrollView>
                 {popularTitles.map((title) => {
-                  const match = title.match(/.*?[.?!]/);
-                  const firstSentence = match ? match[0].trim() : title.trim();
+                  // Take the first part of the title, remove punctuation
+                  const firstSentence = title.replace(/[\.\?!,].*$/, "").trim();
+
+                  // Check if the current query matches the popular title
+                  const isSelected = query.toLowerCase() === firstSentence.toLowerCase();
+
                   return (
-                    <TouchableOpacity key={title} onPress={() => setQuery(firstSentence)}>
-                      <View className="flex-row items-center py-4 px-2 border-b border-gray-300 dark:border-zinc-700">
-                        <Ionicons name="search-outline" size={20} color={isDark ? "grey" : "grey"} className="mr-4" />
-                        <Text className={`text-xl ${isDark ? "text-white/50" : "text-black/50"}`}>
-                          {firstSentence}
-                        </Text>
-                      </View>
+                    <TouchableOpacity
+                      key={title}
+                      onPress={() => {
+                        setQuery(firstSentence); // Set input to this title
+                        refetchProfiles();       // Trigger search
+                        refetchCapsules();       // Trigger search
+                      }}
+                      className={`flex-row items-center py-4 px-2 border-b border-gray-300 dark:border-zinc-700 ${isSelected ? "bg-green-100 dark:bg-green-900" : ""}`}
+                    >
+                      <Ionicons
+                        name="search-outline"
+                        size={20}
+                        color={isDark ? "grey" : "grey"}
+                        className="mr-4"
+                      />
+                      <Text className={`text-xl ${isDark ? "text-white/50" : "text-black/50"}`}>
+                        {firstSentence}
+                      </Text>
                     </TouchableOpacity>
                   );
-                })}
+                })}</ScrollView>
               </ThemedView>
             )}
+
             {/* Search res */}
             <FlatList
               className="flex-1"

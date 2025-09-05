@@ -9,12 +9,14 @@ export const useCapsulesByOwner = (owner_id: string) => {
   const [page, setPage] = useState(0);
   const [triggerRefetch, setTriggerRefetch] = useState(false);
   const {user} = useAuth();
+  const [endReached, setEndReached] = useState(false);
 
   const range = 5; // capsules per page
 
   const refetch = () => {
     setPage(0);
     setCapsules([]);
+    setEndReached(false); // reset
     setTriggerRefetch(prev => !prev);
   };
 
@@ -40,6 +42,9 @@ export const useCapsulesByOwner = (owner_id: string) => {
     try {
       const pageCapsules = await fetchCapsulesByOwner(owner_id, user?.id || '', page, range);
       if (!pageCapsules) return;
+
+      // If fetched less than requested, mark end reached
+      if (pageCapsules.length < range) setEndReached(true);
       
       // Merge new capsules with existing ones,
       // keeping any local subscription state
@@ -64,5 +69,5 @@ export const useCapsulesByOwner = (owner_id: string) => {
     fetchCapsules();
   }, [page, triggerRefetch]);
 
-  return { isLoading, capsules, handleToggleSub, fetchMore, refetch };
+  return { isLoading, capsules, endReached, handleToggleSub, fetchMore, refetch };
 };

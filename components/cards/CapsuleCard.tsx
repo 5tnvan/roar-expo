@@ -1,8 +1,8 @@
-import CallStatsModal from "@/app/modals/call_stats";
-import CapsuleShareModal from "@/app/modals/capsule_share";
-import LikeStatsModal from "@/app/modals/like_stats";
-import MarkdownModal from "@/app/modals/markdown";
-import PdfViewer from "@/app/modals/pdf_viewer";
+import CallStatsModal from "@/app/(home)/modals/call_stats";
+import CapsuleShareModal from "@/app/(home)/modals/capsule_share";
+import LikeStatsModal from "@/app/(home)/modals/like_stats";
+import MarkdownModal from "@/app/(home)/modals/markdown";
+import PdfViewerModal from "@/app/(home)/modals/pdf_viewer";
 import SubscribeButton from "@/components/buttons/SubButton";
 import { ThemedText } from "@/components/template/ThemedText";
 import { ThemedView } from "@/components/template/ThemedView";
@@ -17,9 +17,9 @@ import { Ionicons } from "@expo/vector-icons";
 import { Link } from "expo-router";
 import React, { useState } from "react";
 import { Alert, Image, Pressable, Text, TouchableOpacity, useColorScheme, View } from "react-native";
-import CapsuleQR from "../CapsuleQR";
 import { Avatar } from "../avatars/Avatar";
 import BlurButton from "../buttons/BlurButton";
+import CapsuleQR from "../CapsuleQR";
 import { MinFormatter } from "../helpers/MinFormatter";
 import NumberFormatter from "../helpers/NumberFormatter";
 
@@ -118,7 +118,7 @@ const CapsuleCard: React.FC<CapsuleCardProps> = ({
       <CapsuleShareModal visible={shareVisible} onClose={() => setShareVisible(false)} capsule={capsule} />
 
       {/* Capsule Image */}
-      <View className="relative">
+      <Pressable onPress={() => handleOpenCapsule(capsule)} className="relative">
         <Image
           source={{ uri: capsule.image_url }}
           className="w-full rounded-t-lg"
@@ -132,7 +132,7 @@ const CapsuleCard: React.FC<CapsuleCardProps> = ({
             onPress={() => handleOpenCapsule(capsule)}
           />
         </View>
-      </View>
+      </Pressable>
 
       {/* Stats */}
       <View
@@ -204,48 +204,68 @@ const CapsuleCard: React.FC<CapsuleCardProps> = ({
       </TouchableOpacity>
 
 
-
-      <View className="flex flex-row gap-1 mx-auto">
+      {/* Call action */}
+      <View className="flex flex-row gap-1 mx-auto mb-2">
         <TouchableOpacity onPress={() => handleOpenCapsule(capsule)} className="flex flex-row justify-center items-center gap-1">
           <Ionicons name="call-outline" size={18} color="grey" />
           <ThemedText>{readMinutes} min call</ThemedText>
         </TouchableOpacity>
         <ThemedText>by</ThemedText>
         {capsule.id !== "placeholder" ? <Link href={`/profile/${capsule.owner.id}`}>
-          <Text className={`text-lg font-normal opacity-50 ${isDark ? "text-white" : "text-black"}`}>@{isAuthenticated ? capsule.owner.handle : 'newbie'}
+          <Text className={`text-lg font-normal opacity-50 ${isDark ? "text-white" : "text-black"}`}>
+            @{isAuthenticated ? capsule.owner.handle : 'newbie'}
           </Text>
-        </Link> : <Text className={`text-lg font-normal opacity-50 ${isDark ? "text-white" : "text-black"}`}> @{isAuthenticated ? capsule.owner.handle : 'newbie'}
+        </Link> : 
+        <Text className={`text-lg font-normal opacity-50 ${isDark ? "text-white" : "text-black"}`}>
+          @{isAuthenticated ? capsule.owner.handle : 'newbie'}
         </Text>}
 
       </View>
 
-      <View className="flex flex-row px-4 py-2 gap-4 items-center justify-center">
-        {capsule.owner.id?.toString() === user?.id?.toString() && capsule.pdf_url && (
-          <Pressable onPress={() => setShowPdfModal(true)}>
-            <ThemedText className="text-md" type="link">{`View PDF`}</ThemedText>
-            <PdfViewer visible={showPdfModal} onClose={() => setShowPdfModal(false)} pdfUri={encodeURI(capsule.pdf_url)} />
+      {/* Internal analytics */}
+      {capsule.owner.id?.toString() === user?.id?.toString() && (
+        <View className="flex flex-row px-4 py-2 gap-4 items-center justify-center">
+
+          {capsule.pdf_url && (
+            <Pressable onPress={() => setShowPdfModal(true)}>
+              <ThemedText className="text-md" type="link">View PDF</ThemedText>
+              <PdfViewerModal
+                visible={showPdfModal}
+                onClose={() => setShowPdfModal(false)}
+                pdfUri={encodeURI(capsule.pdf_url)}
+              />
+            </Pressable>
+          )}
+
+          <Pressable onPress={() => setShowMarkdown(true)}>
+            <ThemedText className="text-md" type="link">View message</ThemedText>
           </Pressable>
-        )}
-        {capsule.owner.id?.toString() === user?.id?.toString() && (
-          <Pressable onPress={() => setShowMarkdown(true)}><ThemedText className="text-md" type="link">{`View message`}</ThemedText></Pressable>
-        )}
-        {capsule.owner.id?.toString() === user?.id?.toString() && capsule.id !== "placeholder" && (
-          <Pressable onPress={() => setLikeStats(true)}><ThemedText className="text-md" type="link">{`View likes`}</ThemedText></Pressable>
-        )}
-        {capsule.owner.id?.toString() === user?.id?.toString() && capsule.id !== "placeholder" && (
-          <Pressable onPress={() => setCallStats(true)}><ThemedText className="text-md" type="link">{`View analytics`}</ThemedText></Pressable>
-        )}
-      </View>
+
+          {capsule.id !== "placeholder" && (
+            <>
+              <Pressable onPress={() => setLikeStats(true)}>
+                <ThemedText className="text-md" type="link">View likes</ThemedText>
+              </Pressable>
+
+              <Pressable onPress={() => setCallStats(true)}>
+                <ThemedText className="text-md" type="link">View analytics</ThemedText>
+              </Pressable>
+            </>
+          )}
+
+        </View>
+      )}
+
 
 
       {/* Author */}
-      {!hideDetails && <View className={`flex flex-row justify-between items-center px-4 p-2 border-t ${isDark ? "border-zinc-800" : "border-neutral-100"
+      {!hideDetails && <View className={`flex flex-row justify-between items-center px-2 p-2 border-t ${isDark ? "border-zinc-800" : "border-neutral-100"
         }`}>
         <View className="flex flex-row items-center gap-2">
           {capsule.id !== "placeholder" ? (
             <Link href={`/profile/${capsule.owner.id}`}>
               <View className="flex flex-row items-center gap-2">
-                <Avatar uri={capsule.owner.avatar_url} size={30} showTick={true} />
+                <Avatar uri={capsule.owner.avatar_url} size={40} showTick={true} />
                 <ThemedText className="font-semibold">
                   {capsule.owner.full_name}
                 </ThemedText>

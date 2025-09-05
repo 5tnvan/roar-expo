@@ -1,7 +1,8 @@
+import { useAuth } from "@/services/providers/AuthProvider";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React, { useRef } from "react";
-import { Animated, Pressable } from "react-native";
+import { Alert, Animated, Pressable } from "react-native";
 
 type SnapButtonProps = {
   disabled?: boolean;
@@ -9,6 +10,7 @@ type SnapButtonProps = {
 
 export default function AIConvoButton({ disabled = false }: SnapButtonProps) {
   const router = useRouter();
+  const {isAuthenticated} = useAuth();
   const scale = useRef(new Animated.Value(1)).current;
 
   const handlePressIn = () => {
@@ -32,7 +34,7 @@ export default function AIConvoButton({ disabled = false }: SnapButtonProps) {
   return (
     <Animated.View style={{ transform: [{ scale }] }}>
       <Pressable
-        onPress={disabled ? undefined : () => router.push("/convos")}
+        onPress={!isAuthenticated ? () => Alert.alert("Sign in to continue") : () => router.push("/convos")}
         onPressIn={handlePressIn}
         onPressOut={handlePressOut}
         className={`p-4 rounded-full bg-gray-200`}

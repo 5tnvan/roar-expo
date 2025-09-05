@@ -1,13 +1,12 @@
-import CapsuleCard from '@/components/cards/CapsuleCard';
-import { usePipecat } from '@/components/providers/PipeCatProvider';
-import { ThemedText } from '@/components/template/ThemedText';
-import { ThemedView } from '@/components/template/ThemedView';
-import BottomMenu from '@/components/ui/BottomMenu';
-import { useExploreCapsules } from '@/hooks/useExploreCapsules';
-import { Capsule } from '@/types/types';
-import { useNavigation } from 'expo-router';
+import { router, useNavigation } from 'expo-router';
 import { ActivityIndicator, FlatList, TouchableOpacity, useColorScheme } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import CapsuleCard from '../components/cards/CapsuleCard';
+import { usePipecat } from '../components/providers/PipeCatProvider';
+import { ThemedText } from '../components/template/ThemedText';
+import { ThemedView } from '../components/template/ThemedView';
+import { useExploreCapsules } from '../hooks/useExploreCapsules';
+import { Capsule } from '../types/types';
 
 export default function Explore() {
   const colorScheme = useColorScheme();
@@ -29,7 +28,7 @@ export default function Explore() {
 
   const handleReadWithAI = (capsule: Capsule) => {
     sendCapsule(capsule);
-    navigation.goBack();
+    router.push("/")
   };
 
   const handleRefresh = async () => {
@@ -49,7 +48,7 @@ export default function Explore() {
   ];
 
   return (
-    <SafeAreaView edges={['right','bottom','left']} className={`flex-1 ${isDark ? "bg-black" : "bg-white"}`}>
+    <SafeAreaView edges={['right', 'left']} className={`flex-1 ${isDark ? "bg-black" : "bg-zinc-100"}`}>
       {/* Tabs */}
       <ThemedView className="flex-row justify-around border-b border-gray-400/20">
         {tabs.map(tab => (
@@ -98,13 +97,13 @@ export default function Explore() {
             isLoading ? (
               <ActivityIndicator size="small" className="my-4" />
             ) : endReached ? (
-              <ThemedText className="text-center my-4 text-gray-400">
-                You reached the end.
+              <ThemedText className="text-center my-4 text-gray-400 opacity-80">
+                {`You've`} reached the end.
               </ThemedText>
             ) : null
           }
         />
-      )}<BottomMenu />
+      )}
     </SafeAreaView>
   );
 }

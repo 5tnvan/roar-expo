@@ -1,4 +1,6 @@
 // CapsuleShareModal.tsx
+import ShareCard from "@/components/cards/ShareCard";
+import ShareCardWithAvatar from "@/components/cards/ShareCardWithAvatar";
 import { ThemedText } from "@/components/template/ThemedText";
 import { ThemedView } from "@/components/template/ThemedView";
 import { Capsule } from "@/types/types";
@@ -13,8 +15,6 @@ import {
   ViewToken,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import ShareCard from "../../components/cards/ShareCard";
-import ShareCardWithAvatar from "../../components/cards/ShareCardWithAvatar";
 
 interface CapsuleShareModalProps {
   visible: boolean;

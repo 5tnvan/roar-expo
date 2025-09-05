@@ -57,9 +57,6 @@ export async function registerPush(user_id: string): Promise<string | null> {
 
   const existingToken = await getPushToken(tokenData.data);
 
-  console.log(tokenData.data);
-  console.log(existingToken?.user_id, user_id);
-
   if (existingToken) {
     if (existingToken.user_id === user_id) {
       // Token already exists for this user, do nothing

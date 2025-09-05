@@ -7,6 +7,7 @@ type AvatarProps = {
   uri: string;
   size?: number; // avatar size
   showTick?: boolean; // whether to show tick
+  showNotif?: boolean; 
   borderColor?: string; // border color, default blue
 };
 
@@ -14,6 +15,7 @@ export const Avatar = ({
   uri,
   size = 48,
   showTick = false,
+  showNotif = false,
   borderColor = "#3B82F6", // default blue
 }: AvatarProps) => {
   return (
@@ -48,6 +50,12 @@ export const Avatar = ({
           }}
         >
           <Ionicons name="checkmark" size={12} color="white" />
+        </View>
+      )}
+      {showNotif && (
+        <View
+          className="w-3 h-3 bg-red-500 rounded-full absolute top-0 -right-0 border border-white"
+        >
         </View>
       )}
     </View>

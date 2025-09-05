@@ -1,4 +1,4 @@
-import Subs from "@/app/modals/subs";
+import Subs from "@/app/(home)/modals/subs";
 import { ThemedText } from "@/components/template/ThemedText";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/services/providers/AuthProvider";
@@ -140,7 +140,7 @@ export const ProfileCard = ({ profile, hideDetails, onToggleSub, onCallAssistant
 
         {!hideDetails && <>
           <AssistantButton
-            label={`Talk to my assistant`}
+            label={`@${profile.handle}`}
             onPress={handleCallAssistant}
           />
 

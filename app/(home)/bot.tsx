@@ -121,11 +121,8 @@ export default function Bot() {
             <ThemedText className='text-white text-center'>Save</ThemedText>
           </TouchableOpacity>
         </View>
-        <Text className={`mt-2 ${isDark} ? "text-white" : "text-black"`}>
-          * Roar Conversational Agent is free to use, but requires your own Gemini API key.
-        </Text>
-        <Text className={`mt-2 ${isDark} ? "text-white" : "text-black"`}>
-          * Your key is hashed, stored securely and never shared.
+        <Text className={`mt-2 opacity-50 ${isDark} ? "text-white" : "text-black"`}>
+          * Key is required to call Roar Bot.
         </Text>
       </View>
     </SafeAreaView>

@@ -3,15 +3,15 @@ import AppButton from '@/components/buttons/AppButton';
 import CapsuleCard from '@/components/cards/CapsuleCard';
 import { usePipecat } from '@/components/providers/PipeCatProvider';
 import { ThemedText } from '@/components/template/ThemedText';
-import BottomMenu from '@/components/ui/BottomMenu';
 import { useCapsulesBySub } from '@/hooks/useCapsulesBySub';
 import { useAuth } from '@/services/providers/AuthProvider';
-import { Profile } from '@/types/types';
+import { Capsule, Profile } from '@/types/types';
 import { fetchSubs } from '@/utils/supabase/crudSub';
 import { Link, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
+  Alert,
   FlatList,
   useColorScheme,
   View
@@ -24,7 +24,7 @@ export default function Subs() {
 
   const { user } = useAuth();
   const { isLoading, capsules, handleToggleSub, fetchMore, refetch, endReached } = useCapsulesBySub(user?.id || "");
-  const { sendCapsule } = usePipecat();
+  const { inCall, openCapsule, sendCapsule } = usePipecat();
   const router = useRouter();
 
   const [subscriptions, setSubscriptions] = useState<Profile[]>([]);
@@ -47,33 +47,49 @@ export default function Subs() {
     loadSubs();
   }, [user]);
 
-  const handleReadWithAI = (capsule: any) => {
-    sendCapsule(capsule);
-    router.push("(tabs)");
+  const handleReadWithAI = (capsule: Capsule) => {
+    if (inCall) {
+      Alert.alert(
+        "Already in call",
+        "Please hang up first.",
+        [
+          {
+            text: "Cancel",
+            style: "cancel"
+          },
+          {
+            text: "Go to Call",
+            onPress: () => router.push("/"), // replace with your screen name
+          }
+        ],
+        { cancelable: true })
+    } else {
+      sendCapsule(capsule);
+      router.push("/");
+    }
   };
 
   return (
-    <SafeAreaView edges={['right', 'bottom', 'left']} className={`flex-1 ${isDark ? "bg-black" : "bg-white"}`}>
+    <SafeAreaView edges={['right', 'left']} className={`pb-2 flex-1 ${isDark ? "bg-black" : "bg-zinc-100"}`}>
 
       <View className='border-b border-zinc-500/20 mb-2'>
         {/* Horizontal scroll of subscriptions */}
         {subscriptions.length > 0 && (
-          <FlatList
-            data={subscriptions}
-            keyExtractor={(item) => item.id.toString()}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            className={`p-2 ${isDark ? "bg-black" : "bg-white"}`}
-            renderItem={({ item }) => (
-              <Link
-                href={`/profile/${item.id}`}
-                className="w-14 h-14 mr-1"
-              >
-                <Avatar uri={item.avatar_url} size={50} showTick />
-              </Link>
-            )}
-          />
-        )}
+  <FlatList
+    data={subscriptions}
+    horizontal
+    keyExtractor={(item) => item.id.toString()}
+    className={`p-2 ${isDark ? "bg-black" : "bg-white"}`}
+    renderItem={({ item }) => (
+      <Link href={`/profile/${item.id}`} className="w-14 h-14 mr-1">
+        <Avatar uri={item.avatar_url} size={50} showTick />
+      </Link>
+    )}
+    // Pull-to-refresh props
+    refreshing={loadingSubs}
+    onRefresh={loadSubs} // called when user swipes down
+  />
+)}
       </View>
 
 
@@ -133,7 +149,7 @@ export default function Subs() {
               return <ActivityIndicator size="small" className="my-4" />;
             } else if (!isLoading && endReached) {
               return (
-                <ThemedText className="text-center text-gray-500 my-4">
+                <ThemedText className="text-center text-gray-500 my-4 opacity-80">
                   You’ve reached the end
                 </ThemedText>
               );
@@ -143,7 +159,7 @@ export default function Subs() {
           }}
         />
       )}
-<BottomMenu />
+
 
     </SafeAreaView>
   );

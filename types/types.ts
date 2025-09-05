@@ -89,6 +89,7 @@ export type ConvoSession = {
   created_at: string;
   duration?: number;
   transcript?: TranscriptionEntry[]; // JSONB
+  convo_session_reply_id?: string; // if user opened reply
 };
 
 export type ConvoSessionReply = {

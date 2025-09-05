@@ -39,21 +39,21 @@ export default function Convos() {
 
   const emptyMessage =
     tab === 'sent'
-      ? "When you talk to someone's assistant."
-      : "When someone talks to your assistant.";
+      ? "When you initiated the conversation."
+      : "When someone reaches out to you first.";
 
   return (
     <View className="flex-1 bg-zinc-50 dark:bg-zinc-900">
       {/* Tabs */}
       <ThemedView className="flex-row justify-around border-b border-zinc-500/5">
         <TouchableOpacity className='p-4' onPress={() => setTab('sent')}>
-          <Text className={`text-lg font-semibold ${tab === 'sent' ? 'text-blue-600' : 'text-gray-500'}`}>
-            Sent
+          <Text className={`text-lg font-semibold ${tab === 'sent' ? 'text-blue-500' : 'text-gray-500'}`}>
+            You initiated
           </Text>
         </TouchableOpacity>
         <TouchableOpacity className='p-4' onPress={() => setTab('received')}>
-          <Text className={`text-lg font-semibold ${tab === 'received' ? 'text-blue-600' : 'text-gray-500'}`}>
-            Requests
+          <Text className={`text-lg font-semibold ${tab === 'received' ? 'text-blue-500' : 'text-gray-500'}`}>
+            They reached out
           </Text>
         </TouchableOpacity>
       </ThemedView>
@@ -71,40 +71,58 @@ export default function Convos() {
         </View>
       ) : (
         <FlatList
-          data={convos}
-          keyExtractor={(item, index) => `${item.id}-${index}`}
-          onEndReached={fetchMore}
-          onEndReachedThreshold={0.5}
-          ListFooterComponent={() =>
-            isLoading ? (
-              <View className="py-4">
-                <ActivityIndicator size="small" />
-              </View>
-            ) : null
-          }
-          renderItem={({ item }) => {
-            const person = tab === 'sent' ? item.user : item.caller;
-            return (
-              <TouchableOpacity
-                className="flex-row justify-between items-center p-4 m-2 border-b border-zinc-500/15 dark:bg-zinc-900"
-                onPress={() => handleOpenConvo(item.id)}
-              >
-                <View className='flex-row '>
-                  <Avatar uri={person.avatar_url} size={48} showTick={false} />
-                <View className="ml-3">
-                  <ThemedText className="font-semibold text-lg">{person.full_name}</ThemedText>
-                  <ThemedText className="text-gray-500 text-sm">@{person.handle}</ThemedText>
-                  <ThemedText className="text-gray-400 text-xs">
-                    {new Date(item.created_at).toLocaleString()}
-                  </ThemedText>
-                </View>
-                </View>
-                
-                <Ionicons name='chevron-forward-sharp' size={20} color={isDark ? "white" : "black"}/>
-              </TouchableOpacity>
-            );
-          }}
-        />
+  data={convos}
+  keyExtractor={(item, index) => `${item.id}-${index}`}
+  onEndReached={fetchMore}
+  onEndReachedThreshold={0.5}
+  ListFooterComponent={() =>
+    isLoading ? (
+      <View className="py-4">
+        <ActivityIndicator size="small" />
+      </View>
+    ) : null
+  }
+  renderItem={({ item }) => {
+    const person = tab === 'sent' ? item.user : item.caller;
+
+    // Icon depending on who initiated
+    const initIconName = tab === 'sent' ? 'call-outline' : 'send-outline';
+    const initIconColor = tab === 'sent' ? '#3B82F6' : '#3B82F6';
+
+    // Label before full name
+    const preNameLabel = tab === 'sent' ? 'to' : 'from';
+
+
+    return (
+      <TouchableOpacity
+        className="flex-row justify-between items-center p-4 m-2 border-b border-zinc-500/15 dark:bg-zinc-900"
+        onPress={() => handleOpenConvo(item.id)}
+      >
+        <View className='flex-row items-center'>
+
+          
+
+          <Avatar uri={person.avatar_url} size={48} showTick={false} />
+
+          <View className="ml-3">
+            <ThemedText className="font-semibold text-lg"><ThemedText className='font-normal'>{preNameLabel}</ThemedText>{` `}{person.full_name}</ThemedText>
+            <ThemedText className="text-gray-500 text-sm">@{person.handle}</ThemedText>
+            <ThemedText className="text-gray-400 text-xs">
+              {new Date(item.created_at).toLocaleString()}
+            </ThemedText>
+          </View>
+        </View>
+        <View className='flex flex-row'>
+          <Ionicons name={initIconName} size={20} color={initIconColor} className="mr-2" />
+        <Ionicons name='chevron-forward-sharp' size={20} color={isDark ? "white" : "black"}/>
+        </View>
+        
+      </TouchableOpacity>
+    );
+  }}
+/>
+
+
       )}
     </View>
   );

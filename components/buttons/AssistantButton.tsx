@@ -1,8 +1,7 @@
 import React, { useRef } from "react";
-import { Animated, Pressable, useColorScheme } from "react-native";
+import { Animated, Pressable, Text, useColorScheme, View } from "react-native";
 import { Avatar } from "../avatars/Avatar";
 import RoarAvatar from "../avatars/RoarAvatar";
-import { ThemedText } from "../template/ThemedText";
 
 type AssistantButtonProps = {
   label?: string;
@@ -57,7 +56,11 @@ export default function AssistantButton({
         ) : (
           <RoarAvatar size={avatarSize} onPress={() => {}} />
         )}
-        <ThemedText className="text-md z-10 text-white">{label}</ThemedText>
+        <View className="flex flex-row gap-1 justify-center items-center">
+        <Text className="text-lg text-green-600 font-sans font-semibold tracking-wide">HEY</Text>
+        <Text className="text-lg text-black dark:text-white">
+          {label}
+          </Text></View>
       </Pressable>
     </Animated.View>
   );

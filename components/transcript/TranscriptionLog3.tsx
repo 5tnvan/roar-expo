@@ -24,8 +24,8 @@ export default function TranscriptionLog3({ log, caller, callee }: TranscriptPro
           <View
             key={idx}
             className={`
-              ${isUser ? "self-start bg-green-400/50" : "self-end opacity-80"}
-              ${isDark ? "bg-zinc-900/50" : "bg-zinc-100/50"}
+              ${isUser ? "self-start !bg-green-500/50" : "self-end opacity-80"}
+              ${isDark ? "bg-zinc-900/80" : "bg-zinc-100/50"}
               rounded-xl px-3 py-2 my-1 max-w-[80%]
             `}
           >

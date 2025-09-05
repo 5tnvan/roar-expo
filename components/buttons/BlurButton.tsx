@@ -21,13 +21,13 @@ export default function BlurButton({ onPress, size = 15, readMinutes }: BlurButt
       intensity={isDark ? 50 : 50}
       tint={isDark ? "dark" : "light"}
       experimentalBlurMethod={"dimezisBlurView"}
-      className="flex-1 flex-row justify-center items-center gap-2 p-4">
+      className="flex-1 flex-row justify-center items-center gap-1 p-4 w-fit">
         <RoarAvatar size={size} onPress={() => { }} />
         <Text
           className={`text-xl opacity-100 text-zinc-100 dark:text-white`}
         >
-          <Text className="opacity-100 text-md">{`Call Roar `}</Text>
-          <Text className="opacity-100 text-md text-green-200 dark:text-green-200">{readMinutes}m</Text>
+          <Text className="opacity-100 font-semibold font-sans uppercase text-sm">{`Hey Roar `}</Text>
+          <Text className="opacity-100 font-semibold font-sans uppercase text-sm text-green-500 dark:text-green-200">{readMinutes}m</Text>
         </Text>
 
       </BlurView>

@@ -18,7 +18,7 @@ export const fetchConvoSessionByConvoId = async (
         caller:caller_id (*),
         callee:user_id (*)
       ),
-      convo_session_reply(*)
+      convo_session_reply!convo_session_reply_convo_session_id_fkey(*)
     `)
     .eq("convo_id", convo_id)
     .order("created_at", { ascending: false }) // latest first
@@ -36,6 +36,7 @@ export const fetchConvoSessionByConvoId = async (
     convo_id: session.convo_id,
     caller: session.convo?.caller as Profile,
     callee: session.convo?.callee as Profile,
+    convo_session_reply_id: session.convo_session_reply_id as string,
     reply: session.convo_session_reply as ConvoSessionReply[] || [],
     created_at: session.created_at,
     duration: session.duration,
