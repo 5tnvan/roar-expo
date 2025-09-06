@@ -1,21 +1,15 @@
+import { BlurView } from "expo-blur";
 import React, { useRef } from "react";
 import { Animated, Pressable, Text, useColorScheme } from "react-native";
-import { Avatar } from "../avatars/Avatar";
 import RoarAvatar from "../avatars/RoarAvatar";
 
-type AssistantButtonProps = {
-  label?: string;
+type BlurButton1Props = {
   onPress: () => void;
-  size?: number; // height and avatar size
-  avatarUri?: string; // optional avatar image
+  size?: number;
+  readMinutes?: number;
 };
 
-export default function AssistantButton({
-  label = "Call my assistant",
-  onPress,
-  size = 40,
-  avatarUri,
-}: AssistantButtonProps) {
+export default function BlurButton1({ onPress, size = 15, readMinutes }: BlurButton1Props) {
   const scale = useRef(new Animated.Value(1)).current;
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
@@ -36,29 +30,26 @@ export default function AssistantButton({
     }).start();
   };
 
-  const avatarSize = size * 0.4; // roughly 40% of button height
-
   return (
     <Animated.View style={{ transform: [{ scale }] }}>
       <Pressable
         onPress={onPress}
         onPressIn={handlePressIn}
         onPressOut={handlePressOut}
-        className="flex-row items-center gap-1 rounded-full justify-center border"
-        style={{
-          height: size,
-          borderColor: isDark ? "#22c55e" : "#16a34a",
-        }}
+        className="flex-1 items-center mx-auto rounded-full overflow-hidden border border-zinc-50/40"
       >
-        {avatarUri ? (
-          <Avatar uri={avatarUri} size={25} showTick />
-        ) : (
-          <RoarAvatar size={avatarSize} onPress={() => {}} />
-        )}
-        <Text className="text-md text-black dark:text-white uppercase font-semibold">
-          Hey{` `}
-          {label}
+        <BlurView
+          intensity={50}
+          tint={isDark ? "dark" : "dark"}
+          experimentalBlurMethod="dimezisBlurView"
+          className="flex-row justify-center items-center gap-2 p-4 w-fit"
+        >
+          <RoarAvatar size={size} onPress={() => {}} />
+          <Text className="text-sm font-semibold text-white dark:text-white uppercase">
+            {`Hey Roar `}
+            <Text className="text-green-200">{readMinutes}m</Text>
           </Text>
+        </BlurView>
       </Pressable>
     </Animated.View>
   );

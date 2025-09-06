@@ -57,7 +57,7 @@ export default function CapsuleShareModal({
         {/* ✅ Header */}
 
         <ThemedView className="flex-row justify-between items-center p-4 border-b border-gray-500/20">
-                  <ThemedText className="text-white text-lg font-bold">Share</ThemedText>
+                  <ThemedText className="text-white text-lg font-bold">Take a snap and share!</ThemedText>
                   <TouchableOpacity onPress={onClose} className="p-2">
                     <ThemedText className="text-blue-400">Close</ThemedText>
                   </TouchableOpacity>

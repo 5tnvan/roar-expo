@@ -102,7 +102,7 @@ export default function Convos() {
 
           
 
-          <Avatar uri={person.avatar_url} size={48} showTick={false} />
+          <Avatar uri={person.avatar_url} size={48} showTick={false} plan={person.plan} />
 
           <View className="ml-3">
             <ThemedText className="font-semibold text-lg"><ThemedText className='font-normal'>{preNameLabel}</ThemedText>{` `}{person.full_name}</ThemedText>

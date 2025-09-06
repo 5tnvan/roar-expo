@@ -160,7 +160,7 @@ export default function Index() {
             {isAuthenticated ? (
               
               <Link href="/account">
-                {unreadCount > 0 ? <Avatar uri={profile?.avatar_url || ''} size={40} showNotif /> : <Avatar uri={profile?.avatar_url || ''} size={40} />}
+                {unreadCount > 0 ? <Avatar uri={profile?.avatar_url || ''} size={40} showNotif /> : <Avatar uri={profile?.avatar_url || ''} size={40} plan={profile?.plan} />}
               </Link>
             ) : (
               <TouchableOpacity onPress={() => setLoginVisible(true)}><Text className="text-white text-lg py-2 font-bold">Login</Text></TouchableOpacity>

@@ -1,15 +1,16 @@
 import { usePipecat } from '@/components/providers/PipeCatProvider';
 import { Capsule } from '@/types/types';
-import { useRouter } from 'expo-router';
+import { Link, useRouter } from 'expo-router';
 import React, { useRef, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
   Dimensions,
   FlatList,
+  Text,
   useColorScheme,
   View,
-  ViewToken
+  ViewToken,
 } from 'react-native';
 import CapsuleCard2 from './cards/CapsuleCard2';
 
@@ -97,7 +98,7 @@ export default function InfiniteScroll({
             <CapsuleCard2
               capsule={item}
               onReadWithAI={handleReadWithAI}
-              onToggleSub={(newState: boolean) => handleToggleSub?.(item.owner.id, newState)}
+              onToggleSub={() => {}}
             />
           </View>
         )}
@@ -113,10 +114,11 @@ export default function InfiniteScroll({
             return <ActivityIndicator size="small" className="my-4" />;
           } else if (!isLoading && endReached) {
             return (
-              <></>
-              // <View className="flex-row rounded-lg px-4 py-2 bg-white dark:bg-zinc-800 items-center justify-center text-center" style={{ width: CARD_WIDTH, height: CARD_WIDTH, marginHorizontal: SPACING / 2 }}>
-              //   <Text className="text-center text-gray-500">You’ve reached the end.</Text>
-              // </View>
+              <Link href="/explore" className='text-blue-500'>
+              <View className="flex-row rounded-lg px-4 py-2 bg-white dark:bg-zinc-800 items-center justify-center text-center" style={{ width: CARD_WIDTH, height: CARD_WIDTH, marginHorizontal: SPACING / 2 }}>
+                <Text className="text-center text-gray-500">Go to Explore ›</Text>
+              </View>
+              </Link>
             );
           } else {
             return null;

@@ -16,6 +16,6 @@ export function timeAgo(timestamp: string): string {
   } else if (minutes > 0) {
     return `${minutes}m${minutes > 1 ? "" : ""}`;
   } else {
-    return "just now";
+    return "0s";
   }
 }

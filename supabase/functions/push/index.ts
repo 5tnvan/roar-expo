@@ -28,7 +28,7 @@ const supabase = createClient(
 )
 
 // Helper: format seconds into minutes
-function formatMinutes(seconds: number) {
+function formatSecIntoMins(seconds: number) {
   const totalMinutes = Math.max(1, Math.floor(seconds / 60))
   if (totalMinutes >= 1_000_000_000) return (totalMinutes / 1_000_000_000).toFixed(1).replace(/\.0$/, '') + 'b mins'
   if (totalMinutes >= 1_000_000) return (totalMinutes / 1_000_000).toFixed(1).replace(/\.0$/, '') + 'm mins'
@@ -78,7 +78,7 @@ async function getNotificationDetails(notif: Notification) {
           seconds = callRow.duration ?? 60
         }
       }
-      message = `A caller spent ${formatMinutes(seconds)} exploring your message`
+      message = `A caller spent ${formatSecIntoMins(seconds)} exploring your message`
       break
     }
     case 'notif_like':

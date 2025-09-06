@@ -14,7 +14,7 @@ const CapsulesLoader: FC<CapsulesLoaderProps> = ({ userId }) => {
     handleToggleSub,
     endReached,
     isLoading,
-  } = usePopularCapsules(userId);
+  } = usePopularCapsules(userId, 300);
 
   const hasFetchedRef = useRef(false);
 

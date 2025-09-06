@@ -34,7 +34,7 @@ export const deleteSub = async (account_id: string, subscriber_id: string) => {
 export const fetchSubs = async (subscriber_id: string): Promise<Profile[] | false> => {
   const { data, error } = await supabase
     .from("sub")
-    .select("account:account_id (id, full_name, handle, avatar_url)")
+    .select("account:account_id (id, full_name, handle, avatar_url, plan)")
     .eq("subscriber_id", subscriber_id);
 
   if (error) {

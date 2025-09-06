@@ -1,7 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import CapsuleCard from "../../components/cards/CapsuleCard";
 import { ProfileCard } from "../../components/cards/ProfileCard";
-import { ThemedView } from "../../components/template/ThemedView";
 import { useSearchCapsules } from "../../hooks/useCapsulesSearch";
 import { useSearchProfiles } from "../../hooks/useProfileSearch";
 import { fetchPopularCapsuleTitles } from "../../utils/supabase/crudCapsule";
@@ -64,56 +63,73 @@ export default function Search() {
   );
 
   return (
-    <SafeAreaView edges={['right', 'bottom', 'left']} className="flex-1 bg-zinc-60 dark:black">
-      <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 0}
-      >
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <View className="flex-1">
+  <SafeAreaView edges={['right', 'bottom', 'left']} className="flex-1 bg-zinc-60 dark:bg-black">
+  <KeyboardAvoidingView
+    style={{ flex: 1 }}
+    behavior={Platform.OS === "ios" ? "padding" : undefined}
+    keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 0}
+  >
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View className="flex-1">
 
-            {/* Show popular titles only when input is focused */}
-            {inputFocused && !capsules?.length && !profiles?.length && popularTitles.length > 0 && (
-              <ThemedView className="">
-                <ScrollView>
-                {popularTitles.map((title) => {
-                  // Take the first part of the title, remove punctuation
-                  const firstSentence = title.replace(/[\.\?!,].*$/, "").trim();
+        {/* Search input always at top */}
+        <View className="flex-row items-center border-b border-gray-300 dark:border-zinc-700 px-4 py-2 bg-zinc-100 dark:bg-zinc-900 z-10">
+          <Ionicons name="search-sharp" size={24} color={isDark ? "grey" : "grey"} className="mr-2" />
+          <TextInput
+            placeholder="Search Roar"
+            placeholderTextColor={isDark ? "#aaa" : "#555"}
+            className={`flex-1 rounded-lg px-3 py-2 ${isDark ? "text-white" : "text-black"}`}
+            value={query}
+            style={{ fontSize: 18 }}
+            onChangeText={(text) => {
+              setQuery(text);
+              refetchProfiles();
+              refetchCapsules();
+            }}
+            onFocus={() => setInputFocused(true)}
+            onBlur={() => setInputFocused(false)}
+            autoFocus
+            returnKeyType="search"
+            onSubmitEditing={Keyboard.dismiss}
+          />
+        </View>
 
-                  // Check if the current query matches the popular title
-                  const isSelected = query.toLowerCase() === firstSentence.toLowerCase();
-
-                  return (
-                    <TouchableOpacity
-                      key={title}
-                      onPress={() => {
-                        setQuery(firstSentence); // Set input to this title
-                        refetchProfiles();       // Trigger search
-                        refetchCapsules();       // Trigger search
-                      }}
-                      className={`flex-row items-center py-4 px-2 border-b border-gray-300 dark:border-zinc-700 ${isSelected ? "bg-green-100 dark:bg-green-900" : ""}`}
-                    >
-                      <Ionicons
-                        name="search-outline"
-                        size={20}
-                        color={isDark ? "grey" : "grey"}
-                        className="mr-4"
-                      />
-                      <Text className={`text-xl ${isDark ? "text-white/50" : "text-black/50"}`}>
-                        {firstSentence}
-                      </Text>
-                    </TouchableOpacity>
-                  );
-                })}</ScrollView>
-              </ThemedView>
-            )}
-
-            {/* Search res */}
+        {/* Popular titles or search results */}
+        <View className="flex-1">
+          {inputFocused && !capsules?.length && !profiles?.length && popularTitles.length > 0 ? (
+            <ScrollView keyboardShouldPersistTaps="handled">
+              {popularTitles.map((title, index) => {
+                const firstSentence = title.replace(/[\.\?!,].*$/, "").trim();
+                const isSelected = query.toLowerCase() === firstSentence.toLowerCase();
+                return (
+                  <TouchableOpacity
+                    key={`${firstSentence}-${index}`}
+                    onPress={() => {
+                      setQuery(firstSentence);
+                      refetchProfiles();
+                      refetchCapsules();
+                    }}
+                    className={`flex-row items-center py-4 px-2 border-b border-gray-300 dark:border-zinc-700 ${
+                      isSelected ? "bg-green-100 dark:bg-green-900" : ""
+                    }`}
+                  >
+                    <Ionicons
+                      name="search-outline"
+                      size={20}
+                      color={isDark ? "grey" : "grey"}
+                      className="mr-4"
+                    />
+                    <Text className={`text-xl ${isDark ? "text-white/50" : "text-black/50"}`}>
+                      {firstSentence}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </ScrollView>
+          ) : (
             <FlatList
-              className="flex-1"
               data={capsules}
-              keyExtractor={(item, index) => `${item.id}-${index}`}
+              keyExtractor={(item) => item.id}
               renderItem={({ item }) => (
                 <CapsuleCard
                   capsule={item}
@@ -126,32 +142,17 @@ export default function Search() {
               onEndReachedThreshold={0.5}
               refreshing={loadingCapsules}
               onRefresh={refetchCapsules}
+              keyboardShouldPersistTaps="handled"
             />
+          )}
+        </View>
 
-            {/* Search input */}
-            <View className="flex flex-row items-center border-t border-gray-300 dark:border-zinc-700">
-              <Ionicons name="search-sharp" size={24} color={isDark ? "grey" : "grey"} className="ml-4" />
-              <TextInput
-                placeholder="Search Roar"
-                placeholderTextColor={isDark ? "#aaa" : "#555"}
-                className={`flex-1 rounded-lg px-2 py-5 ${isDark ? "text-white" : "text-black"}`}
-                value={query}
-                style={{ fontSize: 18 }}
-                onChangeText={(text) => {
-                  setQuery(text);
-                  refetchProfiles();
-                  refetchCapsules();
-                }}
-                onFocus={() => setInputFocused(true)}
-                onBlur={() => setInputFocused(false)}
-                autoFocus
-                returnKeyType="search"
-                onSubmitEditing={Keyboard.dismiss}
-              />
-            </View>
-          </View>
-        </TouchableWithoutFeedback>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+      </View>
+    </TouchableWithoutFeedback>
+  </KeyboardAvoidingView>
+</SafeAreaView>
+
+
+
   );
 }

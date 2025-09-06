@@ -29,8 +29,6 @@ export default function RootLayout() {
 
 export function HeaderRight() {
     const colorScheme = useColorScheme();
-    const { profile } = useAuth();
-    
 
     const iconColor = colorScheme === "dark" ? "white" : "black";
 
@@ -45,12 +43,10 @@ export function HeaderRight() {
 
 export function HeaderLeft() {
   const router = useRouter();
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === "dark";
 
   return (
     <TouchableOpacity
-      style={{ marginLeft: 10 }}
+      style={{ marginLeft: 10, marginRight: 5 }}
       onPress={() => {
         router.push("/"); // go home
       }}
@@ -172,7 +168,7 @@ function InnerLayout() {
                             headerShown: true,
                             tabBarLabel: `@${profile?.handle.toUpperCase()}`,
                             tabBarIcon: ({ color, size }) => (
-                                <Avatar uri={profile?.avatar_url || ''} size={30} />
+                                <Avatar uri={profile?.avatar_url || ''} size={30} plan={profile?.plan} />
                             ),
                             headerRight: () => <HeaderRight />,
                             headerLeft: () => <HeaderLeft />,

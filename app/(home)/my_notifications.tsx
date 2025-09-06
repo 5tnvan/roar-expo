@@ -50,7 +50,7 @@ export default function MyNotifications() {
     } else {
       avatar = item.avatar_url ? (
         <View className="mr-2">
-          <Avatar uri={item.avatar_url} size={36} />
+          <Avatar uri={item.avatar_url} size={36} plan={item.plan} showTick />
         </View>
       ) : (
         <View className="w-10 h-10 rounded-full bg-gray-300 mr-3" />
@@ -60,7 +60,7 @@ export default function MyNotifications() {
     return (
       <Link href={item.deep_link as any ?? "/"} asChild>
         <TouchableOpacity
-          className={`flex-row items-center p-3 border-b ${
+          className={`flex-row items-top p-3 border-b ${
             isDark ? "border-gray-700" : "border-gray-200"
           }`}
         >

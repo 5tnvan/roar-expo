@@ -1,4 +1,4 @@
-import { router, useNavigation } from 'expo-router';
+import { router } from 'expo-router';
 import { ActivityIndicator, FlatList, TouchableOpacity, useColorScheme } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import CapsuleCard from '../components/cards/CapsuleCard';
@@ -23,19 +23,18 @@ export default function Explore() {
     isLoading
   } = useExploreCapsules();
 
-  const navigation = useNavigation();
   const { sendCapsule } = usePipecat();
 
   const handleReadWithAI = (capsule: Capsule) => {
     sendCapsule(capsule);
-    router.push("/")
+    router.push("/");
   };
 
-  const handleRefresh = async () => {
+  const handleRefresh = () => {
     refetch();
   };
 
-  const handleLoadMore = async () => {
+  const handleLoadMore = () => {
     if (!endReached && !isLoading) {
       fetchMore();
     }
@@ -98,7 +97,7 @@ export default function Explore() {
               <ActivityIndicator size="small" className="my-4" />
             ) : endReached ? (
               <ThemedText className="text-center my-4 text-gray-400 opacity-80">
-                {`You've`} reached the end.
+                {`You've reached the end.`}
               </ThemedText>
             ) : null
           }

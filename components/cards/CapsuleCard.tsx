@@ -1,4 +1,6 @@
 import CallStatsModal from "@/app/(home)/modals/call_stats";
+import CapsuleCommentsModal from "@/app/(home)/modals/capsule_comments";
+import CapsuleMenuModal from "@/app/(home)/modals/capsule_menu";
 import CapsuleShareModal from "@/app/(home)/modals/capsule_share";
 import LikeStatsModal from "@/app/(home)/modals/like_stats";
 import MarkdownModal from "@/app/(home)/modals/markdown";
@@ -9,19 +11,22 @@ import { ThemedView } from "@/components/template/ThemedView";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/services/providers/AuthProvider";
 import { Capsule } from "@/types/types";
-import { getReadMinutes } from "@/utils/getReadMinutes";
+import { formatNumber } from "@/utils/formatters/formatNumbers";
+import { formatSecIntoMins } from "@/utils/formatters/formatSecIntoMins";
+import { getReadMinutesFromContent } from "@/utils/formatters/getReadMinutesFromContent";
+import { timeAgo } from "@/utils/formatters/timeAgo";
+import { archiveCapsule } from "@/utils/supabase/crudCapsule";
+import { insertFlaggedCapsule } from "@/utils/supabase/crudCapsuleFlagged";
 import { updateCapsuleStatsShare } from "@/utils/supabase/crudCapsuleStats";
 import { deleteSub, insertSub } from "@/utils/supabase/crudSub";
-import { timeAgo } from "@/utils/timeAgo";
 import { Ionicons } from "@expo/vector-icons";
 import { Link } from "expo-router";
 import React, { useState } from "react";
 import { Alert, Image, Pressable, Text, TouchableOpacity, useColorScheme, View } from "react-native";
 import { Avatar } from "../avatars/Avatar";
-import BlurButton from "../buttons/BlurButton";
+import BlurButton2 from "../buttons/BlurButton2";
 import CapsuleQR from "../CapsuleQR";
-import { MinFormatter } from "../helpers/MinFormatter";
-import NumberFormatter from "../helpers/NumberFormatter";
+import { TruncatedText } from "../TruncateText";
 
 interface CapsuleCardProps {
   capsule: Capsule;
@@ -43,13 +48,17 @@ const CapsuleCard: React.FC<CapsuleCardProps> = ({
   const [showCallStats, setCallStats] = useState(false);
   const [showMarkdown, setShowMarkdown] = useState(false);
   const [showPdfModal, setShowPdfModal] = useState(false);
-  const readMinutes = getReadMinutes(capsule.content + capsule.pdf_content);
+  const readMinutes = getReadMinutesFromContent(capsule.content + capsule.pdf_content);
   const [liking, setLiking] = useState(false);
   const [tempLike, setTempLike] = useState<boolean>(capsule.isLiked);
   const [tempLikesCount, setTempLikesCount] = useState<number>(capsule.stats.likes);
   const [shareVisible, setShareVisible] = useState(false);
+  const [menuVisible, setMenuVisible] = useState(false);
+  const [showCommentsModal, setShowCommentsModal] = useState(false);
 
   const handleOpenCapsule = (capsule: any) => {
+
+
     if (isAuthenticated) {
       onReadWithAI(capsule);
     } else {
@@ -108,6 +117,20 @@ const CapsuleCard: React.FC<CapsuleCardProps> = ({
     }
   };
 
+  const handleFlag = async () => {
+    console.log(capsule.id, user?.id || '')
+    const res = await insertFlaggedCapsule(capsule.id, user?.id || '');
+    setMenuVisible(false);
+    if (res) Alert.alert("Message flagged!");
+  };
+
+  const handleArchive = async () => {
+    const res = await archiveCapsule(capsule.id);
+    console.log("capsule.id", capsule.id);
+    setMenuVisible(false);
+    if (res) Alert.alert("Message archived!");
+  };
+
   return (
     <ThemedView
       className={`m-2 mt-0 rounded-lg`}
@@ -116,76 +139,109 @@ const CapsuleCard: React.FC<CapsuleCardProps> = ({
       <LikeStatsModal visible={showLikeStats} capsule_id={capsule?.id || ''} onClose={() => setLikeStats(false)} />
       <CallStatsModal visible={showCallStats} capsule_id={capsule?.id || ''} onClose={() => setCallStats(false)} />
       <CapsuleShareModal visible={shareVisible} onClose={() => setShareVisible(false)} capsule={capsule} />
+      <CapsuleMenuModal
+        visible={menuVisible}
+        onClose={() => setMenuVisible(false)}
+        capsuleOwnerId={capsule.owner.id}
+        onFlag={handleFlag}
+        onArchive={handleArchive}
+      />
+      <CapsuleCommentsModal visible={showCommentsModal} onClose={() => setShowCommentsModal(false)} capsule_id={capsule.id} />
 
       {/* Capsule Image */}
-      <Pressable onPress={() => handleOpenCapsule(capsule)} className="relative">
+      <Pressable onPress={() => { }} className="relative">
         <Image
           source={{ uri: capsule.image_url }}
           className="w-full rounded-t-lg"
           style={{ aspectRatio: 1 }} // ensures square shape
           resizeMode="cover"
         />
-        <View className="absolute w-full top-1/2 -translate-y-1/2">
-          <BlurButton
-            size={14}
-            readMinutes={readMinutes}
-            onPress={() => handleOpenCapsule(capsule)}
-          />
-        </View>
+
       </Pressable>
+
 
       {/* Stats */}
       <View
-        className={`flex-row justify-between border-t border-b opacity-80 ${isDark ? "border-zinc-800" : "border-neutral-200"}`}
+        className={`flex-row justify-between border-t border-b opacity-80 px-4 ${isDark ? "border-zinc-800" : "border-neutral-200"}`}
       >
         {/* Shares */}
-        <TouchableOpacity onPress={handleShare} className="flex-row items-center gap-1 p-4">
+        <TouchableOpacity onPress={handleShare} className="flex-row items-center gap-1 py-4">
           <Ionicons name="share-social" size={20} color={isDark ? "white" : "dark"} />
-          <ThemedText className="opacity-80"><NumberFormatter value={capsule.stats.share} /></ThemedText>
+          <ThemedText className="opacity-80">{formatNumber(capsule.stats.share)}</ThemedText>
         </TouchableOpacity>
 
         {/* Likes */}
-        {capsule.id !== "placeholder" ? <TouchableOpacity className="flex-row items-center gap-1 p-4" onPress={handleLike}>
+        {capsule.id !== "placeholder" ? <TouchableOpacity className="flex-row items-center gap-1 py-4" onPress={handleLike}>
           <Ionicons name={tempLike ? "hand-right-sharp" : "hand-right-outline"} size={18} color={tempLike ? "green" : "grey"} />
-          <ThemedText className="opacity-80"><NumberFormatter value={tempLikesCount} /> approved</ThemedText>
+          <ThemedText className="opacity-80">{formatNumber(tempLikesCount)}</ThemedText>
         </TouchableOpacity> : <TouchableOpacity className="flex-row items-center gap-1" onPress={() => { Alert.alert("This is a preview only") }}>
           <Ionicons name="hand-right" size={20} color="green" />
-          <ThemedText className="opacity-80"><NumberFormatter value={capsule.stats.likes} /></ThemedText>
+          <ThemedText className="opacity-80">{formatNumber(capsule.stats.likes)}</ThemedText>
         </TouchableOpacity>}
 
-        {/* Duration */}
-        <View className="flex-row items-center gap-1 p-4">
+        {/* Total Duration */}
+        <View className="flex-row items-center gap-1 py-4">
           <Ionicons name="call" size={18} color="red" />
           <ThemedText className="opacity-80">
-            <MinFormatter seconds={capsule.stats.duration} />
+            {formatSecIntoMins(capsule.stats.duration)}
           </ThemedText>
         </View>
 
+        {/* Comments */}
+        <TouchableOpacity onPress={() => setShowCommentsModal(true)} className="flex-row items-center gap-1 py-4">
+          <Ionicons name="chatbox-ellipses-outline" size={18} color={isDark ? "white" : "dark"} />
+          {
+            capsule.stats.comments > 0 && <ThemedText className="opacity-80">
+              {formatNumber(capsule.stats.comments)}
+            </ThemedText>
+          }
+          
+        </TouchableOpacity>
+
         {/* Views */}
-        <View className="flex-row items-center gap-1 p-4">
+        <View className="flex-row items-center gap-1 py-4">
           <Ionicons name="eye-outline" size={20} color={isDark ? "white" : "dark"} />
-          <ThemedText className="opacity-80"><NumberFormatter value={capsule.stats.views} /></ThemedText>
+          <ThemedText className="opacity-80">
+            {formatNumber(capsule.stats.views)}
+          </ThemedText>
         </View>
+
+        {/* Three vertical dots menu */}
+        {capsule.id !== "placeholder" && <Pressable className="flex-row items-center py-4" onPress={() => setMenuVisible(true)}>
+          <Ionicons name="ellipsis-vertical" size={20} color={isDark ? "white" : "black"} />
+        </Pressable>}
+
       </View>
+
+      <View className="px-4 py-3">
+        <BlurButton2
+          size={14}
+          readMinutes={readMinutes as number}
+          onPress={() => handleOpenCapsule(capsule)}
+        />
+      </View>
+
+      
 
       {/* Capsule title */}
       <Text
-        className={`mt-4 mx-5 text-lg ${isDark ? "text-white" : "text-black"}`}
+        className={`mx-5 text-lg ${isDark ? "text-white" : "text-black"}`}
         numberOfLines={4}
         ellipsizeMode="tail"
       >
         {capsule.id !== "placeholder" ? (
-          <Link href={`/profile/${capsule.owner.id}`}>
-            <Text className={`text-lg font-normal opacity-50 ${isDark ? "text-white" : "text-black"}`}>
-              @{isAuthenticated ? capsule.owner.handle : 'newbie'}{" "}
-            </Text>
-          </Link>
+          <>
+          <ThemedText className="text-sm font-medium">
+            {timeAgo(capsule.created_at)} ago{` `}
+          </ThemedText>
+          </>
         ) : (
-          <Text className={`text-lg font-normal opacity-50 ${isDark ? "text-white" : "text-black"}`}>
+          <>
+          <Text className={`text-lg font-normal ${isDark ? "text-white/50" : "text-black/50"}`}>
             @{isAuthenticated ? capsule.owner.handle : 'newbie'}{" "}
           </Text>
+          </>
         )}
-
         {capsule.id !== "placeholder" ? (
           <Link href={`/capsule/${capsule.id}`} className="z-20">
             {capsule.title.replace(/[\r\n]+/g, " ")}
@@ -194,7 +250,18 @@ const CapsuleCard: React.FC<CapsuleCardProps> = ({
           capsule.title.replace(/[\r\n]+/g, " ")
         )}
       </Text>
-
+      {/* Call action */}
+      <View className="flex flex-row gap-1 mx-auto mt-2">
+        <TouchableOpacity onPress={() => handleOpenCapsule(capsule)} className="flex flex-row justify-center items-center gap-1">
+          <Ionicons name="call-outline" size={18} color="grey" />
+          <Text className="text-black/50 dark:text-white/50 text-lg">{readMinutes} min call</Text>
+        </TouchableOpacity>
+                  <Link href={`/profile/${capsule.owner.id}`}>
+            <Text className={`text-lg font-normal ${isDark ? "text-white/50" : "text-black/50"}`}>
+              @{isAuthenticated ? capsule.owner.handle : 'newbie'}{" "}
+            </Text>
+          </Link>
+      </View>
 
       {/* QR Code wrapped in TouchableOpacity */}
       <TouchableOpacity onPress={handleShare} className="mx-auto m-3">
@@ -203,28 +270,9 @@ const CapsuleCard: React.FC<CapsuleCardProps> = ({
         />
       </TouchableOpacity>
 
-
-      {/* Call action */}
-      <View className="flex flex-row gap-1 mx-auto mb-2">
-        <TouchableOpacity onPress={() => handleOpenCapsule(capsule)} className="flex flex-row justify-center items-center gap-1">
-          <Ionicons name="call-outline" size={18} color="grey" />
-          <ThemedText>{readMinutes} min call</ThemedText>
-        </TouchableOpacity>
-        <ThemedText>by</ThemedText>
-        {capsule.id !== "placeholder" ? <Link href={`/profile/${capsule.owner.id}`}>
-          <Text className={`text-lg font-normal opacity-50 ${isDark ? "text-white" : "text-black"}`}>
-            @{isAuthenticated ? capsule.owner.handle : 'newbie'}
-          </Text>
-        </Link> : 
-        <Text className={`text-lg font-normal opacity-50 ${isDark ? "text-white" : "text-black"}`}>
-          @{isAuthenticated ? capsule.owner.handle : 'newbie'}
-        </Text>}
-
-      </View>
-
       {/* Internal analytics */}
       {capsule.owner.id?.toString() === user?.id?.toString() && (
-        <View className="flex flex-row px-4 py-2 gap-4 items-center justify-center">
+        <View className="flex flex-row px-4 pb-2 gap-4 items-center justify-center">
 
           {capsule.pdf_url && (
             <Pressable onPress={() => setShowPdfModal(true)}>
@@ -256,8 +304,6 @@ const CapsuleCard: React.FC<CapsuleCardProps> = ({
         </View>
       )}
 
-
-
       {/* Author */}
       {!hideDetails && <View className={`flex flex-row justify-between items-center px-2 p-2 border-t ${isDark ? "border-zinc-800" : "border-neutral-100"
         }`}>
@@ -265,25 +311,20 @@ const CapsuleCard: React.FC<CapsuleCardProps> = ({
           {capsule.id !== "placeholder" ? (
             <Link href={`/profile/${capsule.owner.id}`}>
               <View className="flex flex-row items-center gap-2">
-                <Avatar uri={capsule.owner.avatar_url} size={40} showTick={true} />
+                <Avatar uri={capsule.owner.avatar_url} size={40} showTick={true} plan={capsule.owner.plan} />
                 <ThemedText className="font-semibold">
-                  {capsule.owner.full_name}
+                  <TruncatedText text={capsule.owner.full_name} maxLength={20} />
                 </ThemedText>
               </View>
             </Link>
           ) : (
             <View className="flex flex-row items-center gap-2">
-              {isAuthenticated && <Avatar uri={capsule.owner.avatar_url} size={30} showTick={true} />}
+              {isAuthenticated && <Avatar uri={capsule.owner.avatar_url} size={30} showTick={true} plan={capsule.owner.plan} />}
               <ThemedText className="font-semibold">
                 {isAuthenticated ? capsule.owner.full_name : '@newbie'}
-
               </ThemedText>
             </View>
           )}
-
-          <ThemedText className="opacity-50 text-sm font-medium">
-            {timeAgo(capsule.created_at)}
-          </ThemedText>
 
         </View>
 

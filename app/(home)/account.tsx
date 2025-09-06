@@ -1,5 +1,6 @@
 import AppButton from '@/components/buttons/AppButton';
 import { ProfileCard } from '@/components/cards/ProfileCard';
+import PlanStartCard from '@/components/PlanStartCard';
 import { ThemedText } from '@/components/template/ThemedText';
 import { LanguageChooser } from '@/components/ui/LangChooser';
 import { languages } from '@/constants/Languages';
@@ -9,6 +10,7 @@ import { useAuth } from '@/services/providers/AuthProvider';
 import { LanguageOption } from '@/types/types';
 import { uploadToBunny } from '@/utils/bunny/uploadToBunny';
 import { updateProfileAppLanguage, updateProfileAvatar } from '@/utils/supabase/crudProfile';
+import { profile_delete } from '@/utils/supabase/crudProfileDelete';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from "expo-image-picker";
 import { useRouter } from 'expo-router';
@@ -55,9 +57,9 @@ export default function Account() {
 
   const handleLogout = async () => {
     if (!user) {
-    Alert.alert("No user logged in, skipping sign out");
-    return;
-  }
+      Alert.alert("No user logged in, skipping sign out");
+      return;
+    }
     const { error } = await supabase.auth.signOut();
     if (error) console.error("Error signing out:", error.message);
     else router.back();
@@ -72,9 +74,9 @@ export default function Account() {
     if (!user) return;
 
     const limits = {
-      fullName: 50,
-      handle: 20,
-      intro: 200,
+      fullName: 21,
+      handle: 21,
+      intro: 148,
     };
 
     const sanitize = (value: string, limit: number) =>
@@ -180,115 +182,173 @@ export default function Account() {
     }
   };
 
+  const handleDelete = async () => {
+    Alert.alert(
+      "Delete Account",
+      "Your account and data will be deleted within 30 days. Do you want to proceed?",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Yes, delete",
+          style: "destructive",
+          onPress: async () => {
+            if (!user?.id) return;
+
+            const error = await profile_delete(user.id);
+
+            if (!error) {
+              Alert.alert("Your account will be deleted within 30 days.");
+              return;
+            } else {
+              Alert.alert("Your account is already in the process of deletion.");
+            }
+          },
+        },
+      ]
+    );
+  };
+
+
   return (
     <><SafeAreaView edges={['right', 'bottom', 'left']}>
 
       {isAuthenticated && (
-        <><ScrollView className='' contentContainerStyle={{
-          flexGrow: 1,
-          alignItems: 'flex-start', // items-start
-          gap: 12,                  // gap-4 (16px)
-          padding: 12,              // p-4
-        }}>
-          {profile && user?.id && <ProfileCard profile={profileById || profile} onToggleSub={handleToggleSub} onCallAssistantWithAI={() => Alert.alert("Can't call yourself.")} />}
+        <>
+          <ScrollView className='' contentContainerStyle={{
+            flexGrow: 1,
+            alignItems: 'flex-start', // items-start
+            gap: 12,                  // gap-4 (16px)
+            padding: 12,              // p-4
+          }}>
 
-          <ThemedText className='font-bold'>Profile</ThemedText>
-          <View className="flex flex-col w-full gap-4">
-            {/* Full Name */}
-            <View className="flex flex-row justify-between items-center">
-              <View>
-                <ThemedText className="text-md">Full Name</ThemedText>
-                <ThemedText className="opacity-50">{fullName || "Not set"}</ThemedText>
+            <View className='flex-col gap-8 w-full'>
+              {profile && user?.id && <ProfileCard profile={profileById || profile} onToggleSub={handleToggleSub} onCallAssistantWithAI={() => Alert.alert("Can't call yourself.")} />}
+              <View className='profile w-full gap-2'>
+                <ThemedText className='font-bold'>Profile</ThemedText>
+                <View className="flex flex-col w-full gap-2">
+                  {/* Full Name */}
+                  <View className="flex flex-row justify-between items-center">
+                    <View>
+                      <ThemedText className="text-md">Full Name</ThemedText>
+                      <ThemedText className="opacity-50">{fullName || "Not set"}</ThemedText>
+                    </View>
+                    <AppButton title="Change" variant="outline" onPress={() => openModal('fullName')} />
+                  </View>
+
+                  {/* Handle */}
+                  <View className="flex flex-row justify-between items-center">
+                    <View>
+                      <ThemedText className="text-md">Handle</ThemedText>
+                      <ThemedText className="opacity-50">{`@${handle}` || "Not set"}</ThemedText>
+                    </View>
+                    <AppButton title="Change" variant="outline" onPress={() => openModal('handle')} />
+                  </View>
+
+                  {/* Intro */}
+                  <View className="flex flex-row justify-between items-center">
+                    <View className="flex-1">
+                      <ThemedText className="text-md">Intro</ThemedText>
+                      <ThemedText className="opacity-50">{intro || "Not set"}</ThemedText>
+                    </View>
+                    <AppButton title="Change" variant="outline" onPress={() => openModal('intro')} />
+                  </View>
+
+                  {/* Avatar */}
+                  <View className="avatar">
+                    <ThemedText className="text-md font-semibold">Avatar</ThemedText>
+                    <View className='flex flex-row justify-between items-center'>
+                      {avatarUrl && <Image source={{ uri: avatarUrl }} className="w-24 h-24 rounded-md" />}
+                      <AppButton title="Change" variant="outline" onPress={pickAvatar} />
+                    </View>
+                  </View>
+                </View>
               </View>
-              <AppButton title="Change" variant="outline" onPress={() => openModal('fullName')} />
-            </View>
 
-            {/* Handle */}
-            <View className="flex flex-row justify-between items-center">
-              <View>
-                <ThemedText className="text-md">Handle</ThemedText>
-                <ThemedText className="opacity-50">{`@${handle}` || "Not set"}</ThemedText>
+              {/* Account Settings */}
+              <View className='account gap-2 w-full'>
+                <ThemedText className='font-bold'>Account Settings</ThemedText>
+                <View>
+                  <ThemedText>Email</ThemedText>
+                  <ThemedText className='opacity-50'>{user?.email}</ThemedText>
+                </View>
+                <View className='lang w-full gap-3'>
+                  <View className='flex flex-col w-full'>
+                    <View className='flex flex-row gap-2 mb-2 items-center'>
+                      <Ionicons name="language-outline" size={15} color={isDark ? "white" : "black"} />
+                      <ThemedText>App Language</ThemedText>
+                    </View>
+                    <Text className={isDark ? "text-white/60" : "text-black"}>
+                      Your app will be localized to this language.
+                    </Text>
+                  </View>
+                  <LanguageChooser selectedLanguage={language} onSelect={handleLanguageChange} />
+                </View>
               </View>
-              <AppButton title="Change" variant="outline" onPress={() => openModal('handle')} />
-            </View>
 
-            {/* Intro */}
-            <View className="flex flex-row justify-between items-center">
-              <View className="flex-1">
-                <ThemedText className="text-md">Intro</ThemedText>
-                <ThemedText className="opacity-50">{intro || "Not set"}</ThemedText>
-              </View>
-              <AppButton title="Change" variant="outline" onPress={() => openModal('intro')} />
-            </View>
+              {/* Current Plan */}
+              <View className="current-plan w-full gap-4">
+                {/* Header */}
+                <View className="flex flex-row justify-between items-center">
+                  <Text className="text-lg font-bold text-black dark:text-white">
+                    Current Plan
+                  </Text>
+                  <AppButton title="Upgrade" onPress={() => {router.push("/plans")}} />
+                </View>
 
-            {/* Avatar */}
-            <View className="avatar">
-              <ThemedText className="text-md font-semibold">Avatar</ThemedText>
-              <View className='flex flex-row justify-between items-center'>
-                {avatarUrl && <Image source={{ uri: avatarUrl }} className="w-24 h-24 rounded-md" />}
-                <AppButton title="Change" variant="outline" onPress={pickAvatar} />
-              </View>
-            </View>
-          </View>
-
-          {/* Account Settings */}
-          <ThemedText className='font-bold mt-4'>Account Settings</ThemedText>
-          <View>
-            <ThemedText>Email</ThemedText>
-            <ThemedText className='opacity-50'>{user?.email}</ThemedText>
-          </View>
-          <View className='lang w-full gap-3'>
-            <View className='flex flex-col w-full'>
-              <View className='flex flex-row gap-2 mb-2 items-center'>
-                <Ionicons name="language-outline" size={15} color={isDark ? "white" : "black"} />
-                <ThemedText>App Language</ThemedText>
-              </View>
-              <Text className={isDark ? "text-white/60" : "text-black"}>
-                Your app will be localized to this language.
-              </Text>
-            </View>
-            <LanguageChooser selectedLanguage={language} onSelect={handleLanguageChange} />
-          </View>
-
-          <AppButton
-            title="Log out"
-            variant="dark"
-            onPress={handleLogout}
-            className='w-full'
-          />
-
-          {/* Edit Modal */}
-          <Modal
-            animationType="fade"
-            transparent={true}
-            visible={modalVisible}
-            onRequestClose={() => setModalVisible(false)}
-          >
-            <View className="flex-1 justify-center items-center bg-black/50 p-4">
-              <View className="bg-white dark:bg-zinc-800 rounded-lg w-full p-4 gap-2">
-                {modalField === 'avatar' ? (
-                  <AppButton title="Pick Image" variant="primary" onPress={pickAvatar} />
-                ) : (
-                  <>
-                    <TextInput
-                      value={modalField === 'fullName' ? fullName : modalField === 'handle' ? handle : intro}
-                      onChangeText={text => {
-                        if (modalField === 'fullName') setFullName(text);
-                        if (modalField === 'handle') setHandle(text);
-                        if (modalField === 'intro') setIntro(text);
-                      }}
-                      placeholder={modalField || undefined}
-                      style={{ fontSize: 18, padding: 10 }} // bigger text
-                      className="border border-gray-400 rounded-md p-2 text-black dark:text-white"
-                    />
-                    <AppButton title="Save" variant="primary" onPress={saveModalField} />
-                  </>
-                )}
-                <AppButton title="Cancel" variant="outline" onPress={() => setModalVisible(false)} />
+                {/* Plan Card */}
+                <PlanStartCard
+                  title="Start"
+                  dataUsage={{ progress: 0.3, used: "300MB" }}
+                  tokenUsage={{ progress: 1, used: "550" }}
+                />
               </View>
             </View>
-          </Modal>
-        </ScrollView>
+
+            <AppButton
+              title="Log out"
+              variant="dark"
+              onPress={handleLogout}
+              className='w-full'
+            />
+            <AppButton
+              title="Delete account"
+              variant="dark"
+              onPress={handleDelete}
+              className='w-full'
+            />
+
+            {/* Edit Modal */}
+            <Modal
+              animationType="fade"
+              transparent={true}
+              visible={modalVisible}
+              onRequestClose={() => setModalVisible(false)}
+            >
+              <View className="flex-1 justify-center items-center bg-black/50 p-4">
+                <View className="bg-white dark:bg-zinc-800 rounded-lg w-full p-4 gap-2">
+                  {modalField === 'avatar' ? (
+                    <AppButton title="Pick Image" variant="primary" onPress={pickAvatar} />
+                  ) : (
+                    <>
+                      <TextInput
+                        value={modalField === 'fullName' ? fullName : modalField === 'handle' ? handle : intro}
+                        onChangeText={text => {
+                          if (modalField === 'fullName') setFullName(text);
+                          if (modalField === 'handle') setHandle(text);
+                          if (modalField === 'intro') setIntro(text);
+                        }}
+                        placeholder={modalField || undefined}
+                        style={{ fontSize: 18, padding: 10 }} // bigger text
+                        className="border border-gray-400 rounded-md p-2 text-black dark:text-white"
+                      />
+                      <AppButton title="Save" variant="primary" onPress={saveModalField} />
+                    </>
+                  )}
+                  <AppButton title="Cancel" variant="outline" onPress={() => setModalVisible(false)} />
+                </View>
+              </View>
+            </Modal>
+          </ScrollView>
         </>
       )}
     </SafeAreaView>

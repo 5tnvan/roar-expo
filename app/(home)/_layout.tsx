@@ -93,14 +93,30 @@ export default function Layout() {
         }}
       />
       <Stack.Screen
-        name="capsule/[capsule]"
+        name="plans"
         options={{
-          title: "Message",
+          title: "Plans",
           presentation: 'card',
           headerShown: true,
           animation: isAndroid ? "none" : "default",
         }}
       />
+      <Stack.Screen
+      name="capsule/[capsule]"
+      options={{
+        title: "Message",
+        presentation: 'card',
+        headerShown: true,
+        animation: isAndroid ? "none" : "default",
+        headerRight: () => (
+          <TouchableOpacity
+            onPress={() => router.push('/')}
+          >
+            <Text className="text-blue-600 text-xl">Close</Text>
+          </TouchableOpacity>
+        ),
+      }}
+    />
       <Stack.Screen
         name="profile/[profile]"
         options={{
@@ -108,6 +124,13 @@ export default function Layout() {
           presentation: 'card',
           headerShown: true,
           animation: isAndroid ? "none" : "default",
+          headerRight: () => (
+          <TouchableOpacity
+            onPress={() => router.push('/')}
+          >
+            <Text className="text-blue-600 text-xl">Close</Text>
+          </TouchableOpacity>
+        ),
         }}
       />
       <Stack.Screen

@@ -82,7 +82,7 @@ export default function Subs() {
     className={`p-2 ${isDark ? "bg-black" : "bg-white"}`}
     renderItem={({ item }) => (
       <Link href={`/profile/${item.id}`} className="w-14 h-14 mr-1">
-        <Avatar uri={item.avatar_url} size={50} showTick />
+        <Avatar uri={item.avatar_url} size={50} showTick plan={item.plan} />
       </Link>
     )}
     // Pull-to-refresh props

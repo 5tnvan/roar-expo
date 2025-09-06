@@ -1,8 +1,8 @@
 import { Capsule } from "@/types/types";
-import { fetchPopularCapsules } from "@/utils/supabase/crudCapsule";
+import { fetchCapsulesAbove } from "@/utils/supabase/crudCapsule";
 import { useEffect, useState } from "react";
 
-export const usePopularCapsules = (user_id:string) => {
+export const usePopularCapsules = (user_id:string, views_cap: number) => {
   const range = 5;
 
   const [capsules, setCapsules] = useState<Capsule[]>([]);
@@ -37,7 +37,7 @@ export const usePopularCapsules = (user_id:string) => {
     setIsLoading(true);
 
     try {
-      const pageCapsules = await fetchPopularCapsules(user_id, page, range);
+      const pageCapsules = await fetchCapsulesAbove(user_id, page, range, views_cap);
       if (!pageCapsules || pageCapsules.length === 0) {
         setEndReached(true);
         return;

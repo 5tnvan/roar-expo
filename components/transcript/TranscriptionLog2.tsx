@@ -1,14 +1,16 @@
 import { useAuth } from "@/services/providers/AuthProvider";
+import { insertCapsuleComment } from "@/utils/supabase/crudCapsuleComments";
+import { Ionicons } from "@expo/vector-icons";
 import React, { useEffect, useRef } from "react";
-import { FlatList, Text, View } from "react-native";
+import { Alert, FlatList, Text, TouchableOpacity, View } from "react-native";
 import { Avatar } from "../avatars/Avatar";
 import DoubleTickIcon from "../DoubleTickIcon";
 import { usePipecat } from "../providers/PipeCatProvider";
 
 export default function TranscriptionLog2() {
-  const { transcriptionLog } = usePipecat();
+  const { transcriptionLog, openCapsule } = usePipecat();
   const flatListRef = useRef<FlatList>(null);
-  const { user, profile } = useAuth();
+  const { profile } = useAuth();
 
   // Only keep user messages with valid text
   const userMessages = transcriptionLog.filter(
@@ -24,17 +26,28 @@ export default function TranscriptionLog2() {
     const timestamp = item.timestamp
       ? new Date(item.timestamp).toLocaleTimeString()
       : "";
+  const handleSendComment = async (text: string) => {
+    try {
+      await insertCapsuleComment(openCapsule?.capsule.id || '', profile?.id || '', text);
+      Alert.alert("Comment posted!");
+    } catch (err) {
+      console.error("Error inserting comment:", err);
+      Alert.alert("Failed to send comment");
+    }
+  };
 
     return (
-      <View className="mt-1 px-3 py-2 rounded-lg self-start bg-blue-50/90">
-        
-        <Text className="font-normal text-gray-800">{text}</Text>
+      <TouchableOpacity onPress={() => handleSendComment(text)} className="mt-1 px-3 py-2 rounded-lg self-start bg-blue-50/90">
+        <View className="flex flex-row gap-2">
+          {openCapsule && <Text className="font-normal text-gray-800">{text}</Text>}
+          <Ionicons name="chatbox-ellipses" size={16} color={"#3B82F6"}/>
+        </View>
         <View className="flex flex-row items-center justify-start gap-2 mt-1">
-        <Avatar uri={profile?.avatar_url || ''} size={20}/>
+        <Avatar uri={profile?.avatar_url || ''} size={20} plan={profile?.plan} />
           <Text className="text-xs text-gray-500">{timestamp}</Text>
           <DoubleTickIcon size={20} color="green" />
         </View>
-      </View>
+      </TouchableOpacity>
     );
   };
 

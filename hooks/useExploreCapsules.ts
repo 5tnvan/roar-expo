@@ -29,16 +29,56 @@ export const useExploreCapsules = (initialTab: Tab = 'popular') => {
   });
   const [isLoading, setIsLoading] = useState(false);
 
-  const refetch = () => {
-    setCapsulesMap(prev => ({ ...prev, [activeTab]: [] }));
-    setPagesMap(prev => ({ ...prev, [activeTab]: 0 }));
-    setEndReachedMap(prev => ({ ...prev, [activeTab]: false }));
+  const fetchCapsules = async (pageOverride?: number) => {
+    if (!user?.id) return;
+    setIsLoading(true);
+    const page = pageOverride ?? pagesMap[activeTab];
+
+    try {
+      let pageCapsules: Capsule[] = [];
+
+      switch (activeTab) {
+        case 'similar':
+          pageCapsules = (await fetchSimilarCapsules(user.id, page, range)) || [];
+          break;
+        case 'new':
+          pageCapsules = (await fetchNewCapsules(user.id, page, range)) || [];
+          break;
+        case 'popular':
+          pageCapsules = (await fetchPopularCapsules(user.id, page, range)) || [];
+          break;
+      }
+
+      if (pageCapsules.length === 0) {
+        setEndReachedMap(prev => ({ ...prev, [activeTab]: true }));
+        return;
+      }
+
+      setCapsulesMap(prev => ({
+        ...prev,
+        [activeTab]: pageOverride === 0 ? pageCapsules : [...prev[activeTab], ...pageCapsules],
+      }));
+    } catch (err) {
+      console.error(`Error fetching ${activeTab} capsules:`, err);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const fetchMore = () => {
     if (!endReachedMap[activeTab] && !isLoading) {
-      setPagesMap(prev => ({ ...prev, [activeTab]: prev[activeTab] + 1 }));
+      setPagesMap(prev => {
+        const newPage = prev[activeTab] + 1;
+        return { ...prev, [activeTab]: newPage };
+      });
     }
+  };
+
+  const refetch = () => {
+    setCapsulesMap(prev => ({ ...prev, [activeTab]: [] }));
+    setPagesMap(prev => ({ ...prev, [activeTab]: 0 }));
+    setEndReachedMap(prev => ({ ...prev, [activeTab]: false }));
+    fetchCapsules(0); // fetch first page immediately
   };
 
   const handleToggleSub = (ownerId: string, newSubState: boolean) => {
@@ -52,52 +92,7 @@ export const useExploreCapsules = (initialTab: Tab = 'popular') => {
     }));
   };
 
-  const fetchCapsules = async () => {
-    if (!user?.id) return;
-    setIsLoading(true);
-
-    try {
-      let pageCapsules: Capsule[] | null = [];
-
-      switch (activeTab) {
-        case 'similar':
-          pageCapsules = await fetchSimilarCapsules(user.id, pagesMap[activeTab], range);
-          console.log('Similar capsules fetched:', pageCapsules);
-          break;
-        case 'new':
-          pageCapsules = await fetchNewCapsules(user.id, pagesMap[activeTab], range);
-          console.log('New capsules fetched:', pageCapsules);
-          break;
-        case 'popular':
-          pageCapsules = await fetchPopularCapsules(user.id, pagesMap[activeTab], range);
-          console.log('Popular capsules fetched:', pageCapsules);
-          break;
-      }
-
-      if (!pageCapsules || pageCapsules.length === 0) {
-        setEndReachedMap(prev => ({ ...prev, [activeTab]: true }));
-        return;
-      }
-
-      setCapsulesMap(prev => ({
-        ...prev,
-        [activeTab]: [
-          ...prev[activeTab],
-          ...pageCapsules.map(c => {
-            const existing = prev[activeTab].find(p => p.id === c.id);
-            return existing ? { ...c, owner: { ...c.owner, isSub: existing.owner.isSub } } : c;
-          })
-        ]
-      }));
-
-    } catch (err) {
-      console.error(`Error fetching ${activeTab} capsules:`, err);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // Fetch on page change, tab change, or user change
+  // Trigger fetch when page or activeTab changes
   useEffect(() => {
     fetchCapsules();
   }, [pagesMap[activeTab], activeTab, user?.id]);

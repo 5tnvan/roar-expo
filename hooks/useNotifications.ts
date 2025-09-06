@@ -11,6 +11,7 @@ export type AppNotification = {
   avatar_url?: string;
   deep_link?: string;
   read: boolean;
+  plan?: string,
 };
 
 const PAGE_SIZE = 10;
@@ -19,15 +20,17 @@ async function formatNotification(notif: any): Promise<AppNotification> {
   let handle = "Someone";
   let avatar_url = "";
   let app_link = "";
+  let plan = "";
 
   if (notif.profile_id) {
     const { data: profile } = await supabase
       .from("profile")
-      .select("handle, avatar_url")
+      .select("handle, avatar_url, plan")
       .eq("id", notif.profile_id)
       .single();
     handle = profile?.handle ?? handle;
     avatar_url = profile?.avatar_url ?? "";
+    plan = profile?.plan ?? "";
   }
 
   if (notif.capsule_id) {
@@ -60,6 +63,12 @@ async function formatNotification(notif: any): Promise<AppNotification> {
     case "notif_shares":
       message = `Your post was shared ${notif.capsule_shares ?? 0} times`;
       break;
+    case "notif_subscribe":
+      message = `@${handle} just subscribed to you 🎉`;
+      break;
+    case 'notif_comment':
+      message = `💬 Yay, @${handle} commented on your message`
+      break
   }
 
   return {
@@ -67,6 +76,7 @@ async function formatNotification(notif: any): Promise<AppNotification> {
     message,
     handle,
     avatar_url,
+    plan,
     deep_link: app_link,
   };
 }

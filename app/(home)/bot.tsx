@@ -1,3 +1,4 @@
+import AppButton from '@/components/buttons/AppButton';
 import { ExternalLink } from '@/components/template/ExternalLink';
 import { ThemedText } from '@/components/template/ThemedText';
 import { LanguageChooser } from '@/components/ui/LangChooser';
@@ -6,6 +7,7 @@ import { useAuth } from '@/services/providers/AuthProvider';
 import { LanguageOption } from '@/types/types';
 import { updateProfileBotLanguage, updateProfileGeminiKey } from '@/utils/supabase/crudProfile';
 import { Ionicons } from '@expo/vector-icons';
+import { router } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { Alert, Clipboard, Text, TextInput, TouchableOpacity, useColorScheme, View } from "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -125,6 +127,12 @@ export default function Bot() {
           * Key is required to call Roar Bot.
         </Text>
       </View>
+      <AppButton
+                title="Upgrade Now"
+                variant="primary"
+                onPress={() => {router.push("/plans")}}
+                className='w-full'
+            />
     </SafeAreaView>
   );
 }

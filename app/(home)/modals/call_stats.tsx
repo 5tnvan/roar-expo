@@ -1,10 +1,10 @@
-import { MinFormatter } from "@/components/helpers/MinFormatter";
 import { ThemedText } from "@/components/template/ThemedText";
 import { ThemedView } from "@/components/template/ThemedView";
 import { useAuth } from "@/services/providers/AuthProvider";
 import type { Capsule, CapsuleCall } from "@/types/types";
+import { formatSecIntoMins } from "@/utils/formatters/formatSecIntoMins";
+import { timeAgo } from "@/utils/formatters/timeAgo";
 import { fetchCapsuleWithCallAnalytics } from "@/utils/supabase/crudCapsule";
-import { timeAgo } from "@/utils/timeAgo";
 import React, { useEffect, useState } from "react";
 import { Modal, ScrollView, TouchableOpacity, useColorScheme, View } from "react-native";
 
@@ -65,10 +65,10 @@ export default function CallStatsModal({ visible, capsule_id, onClose }: CallSta
                 </ThemedText>
                 <View className="flex-row justify-between items-center mb-2">
                   <ThemedText className="text-xs text-gray-500 dark:text-gray-400">
-                    Duration: ~<MinFormatter seconds={call.duration} /> ({call.duration} secs)
+                    Duration: ~{formatSecIntoMins(call.duration)} ({call.duration} secs)
                   </ThemedText>
                   <ThemedText className="text-xs text-gray-400 dark:text-gray-500">
-                    {timeAgo(call.created_at)} ago
+                    {timeAgo(call.created_at)}
                   </ThemedText>
                 </View>
 

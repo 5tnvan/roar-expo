@@ -10,7 +10,7 @@ export default function BackgroundNoAnim({ children }: { children?: React.ReactN
       <ImageBackground
         source={
           isDark
-            ? require("../../assets/bg/bg-dark.jpg")
+            ? require("../../assets/bg/bg-dark.png")
             : require("../../assets/bg/bg-light.png")
         }
         className="flex-1 justify-center items-center w-full h-full"

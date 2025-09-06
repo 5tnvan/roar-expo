@@ -9,9 +9,9 @@ import TranscriptionLog3 from "@/components/transcript/TranscriptionLog3";
 import { useConvoSessionByConvoId } from "@/hooks/useConvoById";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/services/providers/AuthProvider";
-import { formatMinutes } from "@/utils/formatMinutes";
-import { getReadMinutes } from "@/utils/getReadMinutes";
-import { timeAgo } from "@/utils/timeAgo";
+import { formatSecIntoMins } from "@/utils/formatters/formatSecIntoMins";
+import { getReadMinutesFromContent } from "@/utils/formatters/getReadMinutesFromContent";
+import { timeAgo } from "@/utils/formatters/timeAgo";
 import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useRef, useState } from "react";
@@ -129,7 +129,7 @@ export default function Convo() {
                   <View className="flex flex-row justify-center items-center gap-1">
                     <Ionicons name="call-outline" color={isDark ? "grey" : "black"} size={10} />
                     <Text className="gap-2 text-sm text-black dark:text-gray-400">
-                      {formatMinutes(item.duration || 0)} • {timeAgo(item.created_at)} ago
+                      {formatSecIntoMins(item.duration || 0)} • {timeAgo(item.created_at)} ago
                     </Text></View>
 
                 </View>
@@ -144,7 +144,7 @@ export default function Convo() {
                       >
                         {/* Header: Avatar + Reply info */}
                         <View className="flex flex-row items-center gap-2 mb-1">
-                          <Avatar uri={item.callee?.avatar_url} size={40} />
+                          <Avatar uri={item.callee?.avatar_url} size={40} plan={item.callee?.plan} showTick />
                           <View className="flex flex-col items-start">
                             <Text className="text-md black dark:white font-semibold text-gray-800 dark:text-gray-200">
                               {user?.id === callee.id ? "Yay, you replied!" : "Yay, you've got a message!"}
@@ -156,7 +156,7 @@ export default function Convo() {
                   </Text>
                               <Ionicons name="call-outline" size={12} color="grey" />
                               <Text className="text-sm text-gray-500 dark:text-gray-400">
-                                {getReadMinutes(rep.content)} mins • {timeAgo(rep.created_at)} ago
+                                {getReadMinutesFromContent(rep.content)} mins • {timeAgo(rep.created_at)} ago
                               </Text>
                             </View>
                           </View>
@@ -232,7 +232,7 @@ export default function Convo() {
               <View className="flex-row items-center gap-2">
 
                 <>
-                  <Avatar uri={callee.avatar_url} size={30} />
+                  <Avatar uri={callee.avatar_url} size={30} showTick plan={callee.plan} />
                   <TextInput
                     value={reply}
                     onChangeText={(text) => {

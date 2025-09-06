@@ -26,6 +26,7 @@ export type Profile = {
   isSub?: boolean;
   capsuleCount?: number;
   gemini_api_key?: string;
+  plan?: string;
 };
 
 export type CapsuleStats = {
@@ -35,6 +36,7 @@ export type CapsuleStats = {
   calls: number;
   duration: number; // in seconds
   share: number;
+  comments: number;
 };
 
 export type CapsuleCall = {
@@ -50,6 +52,13 @@ export type CapsuleLike = {
   capsule_id: string;
   created_at: string;
   liker: Profile;
+};
+
+export type CapsuleComment = {
+  id: string;
+  created_at: string;
+  comment: string;
+  commenter: Profile;
 };
 
 export type Capsule = {
@@ -97,3 +106,4 @@ export type ConvoSessionReply = {
   created_at: string;
   content: string;
 };
+
